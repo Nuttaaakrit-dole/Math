@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แบบทดสอบ N-NET คณิตศาสตร์ ประถมศึกษา (ชุดที่ 3)</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #7c3aed; --primary-dark: #4c1d95; --primary-light: #f5f3ff;
+    --green: #166534; --green-light: #f0fdf4;
+    --red: #991b1b; --red-light: #fef2f2;
+    --gray-bg: #f8fafc; --gray-card: #ffffff; --gray-border: #e2e8f0;
+    --text: #0f172a; --text-muted: #475569;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Sarabun', sans-serif; background: var(--gray-bg); color: var(--text); padding-bottom: 60px; }
+  .container { max-width: 680px; margin: 0 auto; padding: 16px; }
+  
+  .header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 16px; padding: 24px; color: #fff; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(124,58,237,0.15); }
+  .badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 10px; }
+  .title { font-size: 22px; font-weight: 700; margin-bottom: 5px; line-height: 1.4; }
+  .subtitle { font-size: 14px; opacity: 0.9; }
+
+  .card { background: var(--gray-card); border-radius: 16px; padding: 24px; border: 1px solid var(--gray-border); margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+  
+  .inp-group { margin-bottom: 16px; text-align: left; }
+  .inp-label { display: block; font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; }
+  .inp-text { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid var(--gray-border); font-family: 'Sarabun', sans-serif; font-size: 16px; background: #fdfdfd; }
+  
+  .btn { width: 100%; padding: 14px; border-radius: 10px; border: none; font-family: 'Sarabun', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; }
+  .btn-secondary { background: #e2e8f0; color: var(--text); width: 48%; }
+  
+  .nav-buttons { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
+  .nav-buttons .btn-primary { width: 48%; }
+
+  .prog-text { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .prog-bar { background: #e2e8f0; height: 10px; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+  .prog-fill { background: var(--primary); height: 100%; width: 0%; transition: 0.3s; }
+
+  .q-badge { font-size: 12px; color: var(--primary-dark); background: var(--primary-light); display: inline-block; padding: 4px 10px; border-radius: 6px; font-weight: 700; margin-bottom: 12px; }
+  .q-text { font-size: 17px; font-weight: 600; margin-bottom: 20px; line-height: 1.6; }
+
+  .choices { display: flex; flex-direction: column; gap: 12px; }
+  .choice { display: flex; align-items: center; background: #fff; border: 2px solid var(--gray-border); padding: 14px 16px; border-radius: 12px; cursor: pointer; font-size: 15px; font-family: 'Sarabun', sans-serif; text-align: left; transition: 0.2s; width: 100%; min-height: 60px; }
+  
+  .choice.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); font-weight: 600; }
+  .choice.correct { border-color: var(--green); background: var(--green-light); color: var(--green); font-weight: 600; }
+  .choice.wrong { border-color: var(--red); background: var(--red-light); color: var(--red); font-weight: 600; }
+  
+  .c-let { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; border-radius: 50%; margin-right: 15px; font-weight: 700; font-size: 14px; flex-shrink: 0; color: var(--text-muted); }
+  .choice.selected .c-let { background: var(--primary); color: #fff; }
+  .choice.correct .c-let { background: var(--green); color: #fff; }
+  .choice.wrong .c-let { background: var(--red); color: #fff; }
+
+  .feedback { padding: 16px; border-radius: 12px; font-size: 14px; line-height: 1.6; margin-top: 16px; }
+  .feedback.ok { background: var(--green-light); border: 1px solid var(--green); color: var(--green); }
+  .feedback.no { background: var(--red-light); border: 1px solid var(--red); color: var(--red); }
+  .fb-explain { font-size: 13px; color: #334155; background: rgba(255,255,255,0.7); padding: 10px; border-radius: 8px; margin-top: 10px; display: block; border-left: 3px solid var(--text-muted); }
+  
+  .analysis-card { background: #ffffff; border: 1px solid var(--gray-border); border-radius: 16px; padding: 24px; text-align: left; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+  .analysis-header { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .analysis-item { background: #f8fafc; padding: 12px 16px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid #cbd5e1; }
+  .analysis-item.weak { border-left-color: var(--red); background: #fff5f5; }
+  .analysis-item.good { border-left-color: var(--green); background: #f6fdf9; }
+  .analysis-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
+  .analysis-tag.weak { background: var(--red-light); color: var(--red); }
+  .analysis-tag.good { background: var(--green-light); color: var(--green); }
+
+  .grid-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 20px 0; }
+  .stat-box { background: #f8fafc; padding: 16px 10px; border-radius: 12px; text-align: center; border: 1px solid var(--gray-border); }
+  .stat-num { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .stat-num.green { color: var(--green); }
+  .stat-num.red { color: var(--red); }
+  .stat-num.blue { color: var(--primary); }
+  
+  .review-item { padding: 16px 0; border-bottom: 1px solid var(--gray-border); text-align: left; }
+  .review-item:last-child { border-bottom: none; }
+  .r-q { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+  .r-a { font-size: 14px; margin-bottom: 4px; }
+  .ri-tick { display: inline-block; width: 20px; font-weight: bold; margin-right: 5px; }
+  .ri-tick.ok { color: var(--green); }
+  .ri-tick.no { color: var(--red); }
+
+  .dot-nav { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; justify-content: center; }
+  .dot { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--gray-border); font-family: 'Sarabun'; font-weight: 600; font-size: 12px; cursor: pointer; background: #fff; color: var(--text); }
+  .dot.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .dot.ok { background: var(--green-light); color: var(--green); border-color: var(--green); }
+  .dot.no { background: var(--red-light); color: var(--red); border-color: var(--red); }
+  
+  .table-data { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 14px; }
+  .table-data th, .table-data td { border: 1px solid var(--gray-border); padding: 8px; text-align: center; }
+  .table-data th { background-color: var(--primary-light); color: var(--primary-dark); }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="badge">N-NET • สกร.โนนสัง ประถมศึกษา (ชุดที่ 3)</div>
+    <div class="title">🧮 แบบทดสอบวิชาคณิตศาสตร์ (ระดับคิดวิเคราะห์ขั้นสูง)</div>
+    <div class="subtitle" id="subtitle-text">เน้นทักษะกระบวนการแก้โจทย์ปัญหาเชิงประยุกต์และตัวลวงคุณภาพสูง</div>
+  </div>
+  
+  <div id="app"></div>
+</div>
+
+<script>
+const database = [
+  {
+    cat: "จำนวนและการดำเนินการ",
+    q: "สมชายเปิดร้านขายของชำ เขาซื้อน้ำดื่มมาราคาแพ็กละ 48 บาท จำนวน 25 แพ็ก และซื้อน้ำมันพืชราคาขวดละ 35 บาท จำนวน 40 ขวด สมชายจ่ายเงินไปทั้งหมดกี่บาท และถ้าเขานำเงินใบละ 1,000 บาท จำนวน 3 ใบจ่ายให้พ่อค้า เขาจะได้รับเงินทอนกี่บาท",
+    choices: [
+      "จ่ายเงินทั้งหมด 2,600 บาท และได้รับเงินทอน 400 บาท",
+      "จ่ายเงินทั้งหมด 2,500 บาท และได้รับเงินทอน 500 บาท",
+      "จ่ายเงินทั้งหมด 2,600 บาท และได้รับเงินทอน 1,400 บาท",
+      "จ่ายเงินทั้งหมด 2,400 บาท และได้รับเงินทอน 600 บาท"
+    ],
+    a: 0,
+    exp: "คิดราคาน้ำดื่ม: 48 × 25 = 1,200 บาท, คิดราคาน้ำมันพืช: 35 × 40 = 1,400 บาท รวมจ่ายเงินทั้งหมด = 1,200 + 1,400 = 2,600 บาท สมชายให้เงิน 3,000 บาท จึงได้รับเงินทอน 3,000 - 2,600 = 400 บาท"
+  },
+  {
+    cat: "จำนวนและการดำเนินการ",
+    q: "ชาวสวนเก็บส้มโอได้ทั้งหมด 456 ผล ต้องการจัดใส่กล่อง กล่องละเท่าๆ กันจำนวน 12 กล่อง เพื่อนำไปขายกล่องละ 350 บาท หากขายส้มโอได้หมดทุกกล่อง ชาวสวนจะได้รับเงินทั้งหมดกี่บาท",
+    choices: [
+      "4,200 บาท",
+      "159,600 บาท",
+      "5,472 บาท",
+      "13,300 บาท"
+    ],
+    a: 0,
+    exp: "โจทย์ถามหาจำนวนเงินที่ขายส้มโอได้ทั้งหมด ซึ่งมีส้มโอจัดเรียงได้ 12 กล่อง ขายกล่องละ 350 บาท ดังนั้นจะได้เงินทั้งหมด คือ 12 × 350 = 4,200 บาท (หมายเหตุ: จำนวนส้มโอ 456 ผล เป็นข้อมูลลวงที่นำมาทำให้ผู้เรียนสับสนนำไปหารหรือคูณเพิ่ม)"
+  },
+  {
+    cat: "เศษส่วนและทศนิยม",
+    q: "แม่ค้ามีน้ำเชื่อมอยู่ <span style='font-weight:bold;'>4.5 ลิตร</span> นำไปใช้ทำขนมครั้งแรก <span style='font-weight:bold;'>1.75 ลิตร</span> และใช้ทำน้ำสมุนไพรอีก <span style='font-weight:bold;'>2.1 ลิตร</span> แม่ค้าจะเหลือน้ำเชื่อมกี่ลิตร",
+    choices: [
+      "0.65 ลิตร",
+      "0.85 ลิตร",
+      "1.15 ลิตร",
+      "3.85 ลิตร"
+    ],
+    a: 0,
+    exp: "รวมน้ำเชื่อมที่ใช้ไปทั้งหมด = 1.75 + 2.10 = 3.85 ลิตร เดิมมีน้ำเชื่อม 4.5 ลิตร จะเหลือน้ำเชื่อม = 4.50 - 3.85 = 0.65 ลิตร (ตัวลวงมักเกิดจากการตั้งหลักทศนิยมไม่ตรงกัน เช่น นำ 4.5 - 1.75 แต่อ่านค่าตำแหน่งผิด)"
+  },
+  {
+    cat: "เศษส่วนและทศนิยม",
+    q: "ลวดเส้นหนึ่งยาว 12 เมตร ตัดออกเป็นเส้นยาวเส้นละ <span style='font-weight:bold;'>เศษ 3 ส่วน 4 ของเมตร</span> จะตัดลวดเส้นนี้ได้ทั้งหมดกี่เส้นพอดี",
+    choices: [
+      "9 เส้น",
+      "16 เส้น",
+      "15 เส้น",
+      "48 เส้น"
+    ],
+    a: 1,
+    exp: "การแบ่งส่วนเท่าๆ กันคือการหาร: 12 ÷ (3/4) เปลี่ยนหารเป็นคูณกลับเศษเป็นส่วนจะได้ 12 × (4/3) = (12 × 4) ÷ 3 = 48 ÷ 3 = 16 เส้นพอดี (ตัวลวงยอดฮิตคือการนำ 12 ไปคูณ 3/4 ตรงๆ จนได้ 9 เส้น ซึ่งผิด)"
+  },
+  {
+    cat: "เศษส่วนและทศนิยม",
+    q: "สมศรีต้องการซื้อพริกไทยป่นบรรจุขวดจากร้านค้า 2 ร้านที่มีปริมาณและราคาแตกต่างกัน <br>ร้าน A: ขนาด 60 กรัม ราคา 45 บาท <br>ร้าน B: ขนาด 80 กรัม ราคา 56 บาท <br>ข้อใดเปรียบเทียบราคาพริกไทยป่นได้ถูกต้องและประหยัดที่สุด",
+    choices: [
+      "ร้าน A ราคาถูกกว่าร้าน B เพราะราคาต่อน้ำหนัก 1 กรัม เท่ากับ 0.70 บาท",
+      "ร้าน B ราคาถูกกว่าร้าน A เพราะเมื่อคิดราคาต่อ 1 กรัม ร้าน B ราคา 0.70 บาท ส่วนร้าน A ราคา 0.75 บาท",
+      "ทั้งสองร้านมีราคาเท่ากันเมื่อเทียบสัดส่วนน้ำหนัก",
+      "ร้าน A ประหยัดกว่าเพราะจ่ายเงินน้อยกว่า 11 บาท โดยไม่ต้องคำนึงถึงปริมาณ"
+    ],
+    a: 1,
+    exp: "คิดราคาต่อหน่วย (บาทต่อกรัม): ร้าน A = 45 ÷ 60 = 0.75 บาท/กรัม, ร้าน B = 56 ÷ 80 = 0.70 บาท/กรัม แสดงว่าร้าน B มีราคาต่อหน่วยที่ถูกกว่าและคุ้มค่าประหยัดกว่า"
+  },
+  {
+    cat: "ร้อยละและอัตราส่วน",
+    q: "ร้านค้าติดป้ายราคาโทรทัศน์เครื่องหนึ่งไว้ 8,500 บาท ในช่วงเทศกาลปีใหม่ประกาศ <span style='font-weight:bold;color:var(--red);'>ลดราคา 15%</span> ของราคาที่ติดไว้ ถ้านักศึกษาไปซื้อโทรทัศน์เครื่องนี้จะต้องจ่ายเงินกี่บาท",
+    choices: [
+      "1,275 บาท",
+      "7,225 บาท",
+      "7,325 บาท",
+      "8,385 บาท"
+    ],
+    a: 1,
+    exp: "คำนวณส่วนลด 15% ของ 8,500 = (15/100) × 8,500 = 1,275 บาท ดังนั้นราคาที่ต้องจ่ายจริง = ราคาป้าย - ส่วนลด = 8,500 - 1,275 = 7,225 บาท (ตัวลวง 1,275 คือจำนวนเงินที่ลด ไม่ใช่ราคาขาย)"
+  },
+  {
+    cat: "ร้อยละและอัตราส่วน",
+    q: "ในการทำน้ำเชื่อมเข้มข้น มีอัตราส่วนของ <span style='font-weight:bold;'>น้ำหนักน้ำตาทราย ต่อน้ำสะอาด เป็น 5 : 3</span> ถ้าแม่ค้าใช้น้ำสะอาดในการต้มน้ำเชื่อมจำนวน 12 กิโลกรัม แม่ค้าต้องใช้น้ำตาลทรายกี่กิโลกรัม",
+    choices: [
+      "20 กิโลกรัม",
+      "15 กิโลกรัม",
+      "7.2 กิโลกรัม",
+      "36 กิโลกรัม"
+    ],
+    a: 0,
+    exp: "จากอัตราส่วน น้ำตาล : น้ำ = 5 : 3 เมื่อน้ำสะอาดเปลี่ยนจาก 3 เป็น 12 (เกิดจากการคูณด้วย 4) ดังนั้น น้ำตาลทรายต้องคูณด้วย 4 เช่นกัน จะได้ 5 × 4 = 20 กิโลกรัม"
+  },
+  {
+    cat: "ร้อยละและอัตราส่วน",
+    q: "กู้เงินจากกลุ่มออมทรัพย์ชุมชนจำนวน 5,000 บาท อัตราดอกเบี้ยร้อยละ 6 ต่อปี เมื่อครบกำหนดเวลา 1 ปีเต็ม จะต้องนำเงินไปคืนกลุ่มออมทรัพย์รวมทั้งหมดกี่บาท (เงินต้นรวมดอกเบี้ย)",
+    choices: [
+      "300 บาท",
+      "5,300 บาท",
+      "5,006 บาท",
+      "5,600 บาท"
+    ],
+    a: 1,
+    exp: "ดอกเบี้ยร้อยละ 6 ต่อปี ของเงิน 5,000 บาท = (6/100) × 5,000 = 300 บาท เงินรวมที่ต้องส่งคืนทั้งหมด = เงินต้น + ดอกเบี้ย = 5,000 + 300 = 5,300 บาท"
+  },
+  {
+    cat: "การวัด ความยาว และมาตราส่วน",
+    q: "ในแผนผังของหมู่บ้านใช้มาตราส่วน <span style='font-weight:bold;'>1 ซม. : 50 เมตร</span> ถ้าวัดระยะทางจากบ้านของนักศึกษาไปยังสนามเด็กเล่นในแผนผังได้ยาว 6.5 เซนติเมตร ระยะทางจริงในภูมิประเทศเท่ากับกี่เมตร",
+    choices: [
+      "325 เมตร",
+      "300 เมตร",
+      "3,250 เมตร",
+      "13 เมตร"
+    ],
+    a: 0,
+    exp: "ระยะทางจริงหาได้จากการนำระยะในแผนผังคูณกับมาตราส่วนที่กำหนด: 6.5 × 50 = 325 เมตรพอดี (ตัวลวง 3,250 เกิดจากการคูณเลขฐานสิบผิดตำแหน่ง)"
+  },
+  {
+    cat: "การวัด ความยาว และมาตราส่วน",
+    q: "สมยศขับรถบรรทุกผลไม้หนัก 3.5 ตัน ผ่านด่านตรวจน้ำหนักที่จำกัดน้ำหนักรถไม่เกิน 3,200 กิโลกรัม รถของสมยศมีน้ำหนักเกินเกณฑ์ที่กำหนดไปกี่กิโลกรัม",
+    choices: [
+      "300 กิโลกรัม",
+      "30 กิโลกรัม",
+      "3 กิโลกรัม",
+      "1,500 กิโลกรัม"
+    ],
+    a: 0,
+    exp: "มาตราส่วนน้ำหนัก 1 ตัน = 1,000 กิโลกรัม รถของสมยศหนัก 3.5 ตัน = 3,500 กิโลกรัม ด่านจำกัดไว้ 3,200 กิโลกรัม แสดงว่าน้ำหนักเกินเกณฑ์ = 3,500 - 3,200 = 300 กิโลกรัม"
+  },
+  {
+    cat: "เรขาคณิต พื้นที่ และปริมาตร",
+    q: "ต้องการล้อมรั้วลวดหนามรอบที่ดินทำกิน <span style='font-weight:bold;'>รูปสี่เหลี่ยมผืนผ้า</span> กว้าง 15 เมตร และยาว 25 เมตร จำนวน 3 รอบ เพื่อป้องกันสัตว์เลี้ยงเข้ามาทำลายพืชผล จะต้องใช้ลวดหนามยาวทั้งหมดกี่เมตร",
+    choices: [
+      "80 เมตร",
+      "240 เมตร",
+      "375 เมตร",
+      "1,125 เมตร"
+    ],
+    a: 1,
+    exp: "ความยาวรอบรูปสี่เหลี่ยมผืนผ้า 1 รอบ = 2 × (กว้าง + ยาว) = 2 × (15 + 25) = 2 × 40 = 80 เมตร ล้อมรั้วทั้งหมด 3 รอบ จึงต้องใช้ลวดหนามยาว = 80 × 3 = 240 เมตร (ตัวลวง 375 เมตร คือพื้นที่ ไม่ใช่ความยาวรอบรูป)"
+  },
+  {
+    cat: "เรขาคณิต พื้นที่ และปริมาตร",
+    q: "บ่อน้ำรูปสี่เหลี่ยมมุมฉากขุดในแปลงเกษตร มีความกว้าง 3 เมตร ความยาว 4 เมตร และลึก 2 เมตร ถ้าต้องการเปิดน้ำใส่บ่อให้เต็มความจุ จะสามารถกักเก็บน้ำได้ปริมาตรสูงสุดกี่ลูกบาศก์เมตร",
+    choices: [
+      "9 ลูกบาศก์เมตร",
+      "24 ลูกบาศก์เมตร",
+      "14 ลูกบาศก์เมตร",
+      "48 ลูกบาศก์เมตร"
+    ],
+    a: 1,
+    exp: "สูตรปริมาตรทรงสี่เหลี่ยมมุมฉาก = กว้าง × ยาว × สูง(ลึก) = 3 × 4 × 2 = 24 ลูกบาศก์เมตร"
+  },
+  {
+    cat: "เรขาคณิต พื้นที่ และปริมาตร",
+    q: "แผ่นกระเบื้องรูปสี่เหลี่ยมจัตุรัสมีเส้นรอบรูปยาว 80 เซนติเมตร แผ่นกระเบื้องนี้จะมีพื้นที่กี่ตารางเซนติเมตร",
+    choices: [
+      "400 ตารางเซนติเมตร",
+      "80 ตารางเซนติเมตร",
+      "6,400 ตารางเซนติเมตร",
+      "20 ตารางเซนติเมตร"
+    ],
+    a: 0,
+    exp: "สี่เหลี่ยมจัตุรัสมีด้าน 4 ด้านยาวเท่ากัน เส้นรอบรูปยาว 80 ซม. แสดงว่ายาวด้านละ 80 ÷ 4 = 20 ซม. สูตรการหาพื้นที่สี่เหลี่ยมจัตุรัส = ด้าน × ด้าน = 20 × 20 = 400 ตารางเซนติเมตร"
+  },
+  {
+    cat: "เรขาคณิต พื้นที่ และปริมาตร",
+    q: "เสาปูนคอนกรีตรูปทรงกระบอกชิ้นหนึ่ง มีพื้นที่ฐาน 150 ตารางเซนติเมตร และมีความสูง 2.5 เมตร เสาปูนต้นนี้จะมีปริมาตรกี่ลูกบาศก์เซนติเมตร (คำเตือน: สังเกตหน่วยความยาวให้ดีก่อนคำนวณ)",
+    choices: [
+      "375 ลูกบาศก์เซนติเมตร",
+      "37,500 ลูกบาศก์เซนติเมตร",
+      "3,750 ลูกบาศก์เซนติเมตร",
+      "152.5 ลูกบาศก์เซนติเมตร"
+    ],
+    a: 1,
+    exp: "ต้องแปลงหน่วยความสูงจากเมตรเป็นเซนติเมตรก่อน: 2.5 เมตร = 250 เซนติเมตร สูตรปริมาตรทรงกระบอก = พื้นที่ฐาน × สูง = 150 × 250 = 37,500 ลูกบาศก์เซนติเมตร (ตัวลวง 375 เกิดจากการนำความสูงหน่วยเมตรไปคูณตรงๆ)"
+  },
+  {
+    cat: "สถิติ แผนภูมิ และความน่าจะเป็น",
+    q: "จากการสำรวจรายจ่ายใน 1 วันของครอบครัวหนึ่ง พบว่าจ่ายค่าอาหาร 240 บาท ค่าเดินทาง 80 บาท ค่าขนมบุตร 40 บาท และออมเงินไว้ 40 บาท หากนำข้อมูลนี้ไปเขียนเป็น <span style='font-weight:bold;'>แผนภูมิรูปวงกลม</span> ส่วนของพื้นที่ 'ค่าอาหาร' จะคิดเป็นกี่เปอร์เซ็นต์ (%) ของรายจ่ายทั้งหมด",
+    choices: [
+      "24%",
+      "50%",
+      "60%",
+      "40%"
+    ],
+    a: 2,
+    exp: "รวมรายจ่ายทั้งหมดในหนึ่งวัน = 240 + 80 + 40 + 40 = 400 บาท คิดสัดส่วนค่าอาหารเป็นเปอร์เซ็นต์ = (240 ÷ 400) × 100 = 0.6 × 100 = 60% ของพื้นที่วงกลมทั้งหมด"
+  },
+  {
+    cat: "สถิติ แผนภูมิ และความน่าจะเป็น",
+    q: "ในกล่องทึบใบหนึ่งมีลูกบอลสีส้ม 5 ลูก สีเขียว 3 ลูก และสีขาว 2 ลูก ถ้านักศึกษาหลับตาหยิบลูกบอลขึ้นมาพร้อมกันจากกล่อง 1 ลูก โอกาสที่จะหยิบได้ <span style='font-weight:bold;'>'ลูกบอลสีเขียวหรือสีขาว'</span> คิดเป็นเศษส่วนเท่าใดของโอกาสทั้งหมด",
+    choices: [
+      "เศษ 3 ส่วน 10",
+      "เศษ 5 ส่วน 10",
+      "เศษ 2 ส่วน 10",
+      "เศษ 8 ส่วน 10"
+    ],
+    a: 1,
+    exp: "จำนวนลูกบอลทั้งหมด = 5 + 3 + 2 = 10 ลูก เหตุการณ์ที่สนใจคือหยิบได้สีเขียวหรือสีขาว ซึ่งมีจำนวนรวมกัน = 3 + 2 = 5 ลูก ดังนั้นความน่าจะเป็นคือ เศษ 5 ส่วน 10 (หรือ 1/2)"
+  },
+  {
+    cat: "สถิติ แผนภูมิ และความน่าจะเป็น",
+    q: "ตารางแสดงจำนวนผู้ป่วยที่เข้ารับการรักษาที่อนามัยชุมชนในเวลา 5 วัน:<br><table class='table-data'><tr><th>จันทร์</th><th>อังคาร</th><th>พุธ</th><th>พฤหัสบดี</th><th>ศุกร์</th></tr><tr><td>12 คน</td><td>18 คน</td><td>15 คน</td><td>9 คน</td><td>21 คน</td></tr></table>ค่าเฉลี่ย (Mean) ของจำนวนผู้ป่วยต่อวันในสัปดาห์นี้เท่ากับกี่คน",
+    choices: [
+      "15 คน",
+      "15.2 คน",
+      "75 คน",
+      "18 คน"
+    ],
+    a: 0,
+    exp: "การหาค่าเฉลี่ย = ผลรวมข้อมูลทั้งหมด ÷ จำนวนข้อมูล = (12 + 18 + 15 + 9 + 21) ÷ 5 = 75 ÷ 5 = 15 คนต่อวัน"
+  },
+  {
+    cat: "พีชคณิตและสมการเบื้องต้น",
+    q: "สมศักดิ์เลี้ยงไก่ชนไว้จำนวนหนึ่ง ต่อมาซื้อมาเพิ่มอีก 15 ตัว ทำให้ตอนนี้เขามีไก่ชนรวมทั้งหมด 42 ตัว ข้อใดคือสมการที่ถูกต้องเพื่อหาจำนวนไก่ชนเดิม (กำหนดให้ x แทนจำนวนไก่ชนเดิมก่อนซื้อเพิ่ม) และเดิมเขามีไก่กี่ตัว",
+    choices: [
+      "สมการ: x - 15 = 42 ; เดิมมีไก่ 57 ตัว",
+      "สมการ: x + 15 = 42 ; เดิมมีไก่ 27 ตัว",
+      "สมการ: 15x = 42 ; เดิมมีไก่ 3 ตัว",
+      "สมการ: x + 42 = 15 ; เดิมมีไก่ 27 ตัว"
+    ],
+    a: 1,
+    exp: "คำว่าซื้อเพิ่มคือการบวก ดังนั้น จำนวนไก่เดิม (x) บวกที่ซื้อเพิ่ม (15) ย่อมเท่ากับจำนวนปัจจุบัน (42) เขียนสมการได้เป็น x + 15 = 42 และแก้สมการโดยย้าย 15 ไปลบออก จะได้ x = 42 - 15 = 27 ตัว"
+  },
+  {
+    cat: "พีชคณิตและสมการเบื้องต้น",
+    q: "สามเท่าของเงินที่แก้วใจมีอยู่ หักออกเสีย 20 บาท แล้วยังคงเหลือเงินอยู่ 100 บาทพอดี แก้วใจมีเงินเดิมอยู่กี่บาท",
+    choices: [
+      "40 บาท",
+      "35 บาท",
+      "80 บาท",
+      "260 บาท"
+    ],
+    a: 0,
+    exp: "เขียนเป็นประโยคสัญลักษณ์สมการได้ว่า: 3x - 20 = 100 ย้าย -20 ไปบวกฝั่งขวา จะได้ 3x = 100 + 20 -> 3x = 120 จากนั้นย้าย 3 ไปหาร จะได้ x = 120 ÷ 3 = 40 บาท"
+  },
+  {
+    cat: "พีชคณิตและสมการเบื้องต้น",
+    q: "สูตรคำนวณเงินค่าแรงของช่างซ่อมไฟฟ้าประจำหมู่บ้านคือ <span style='font-weight:bold;color:var(--primary-dark);'>รายได้ = 300 + (50 × h)</span> เมื่อ h แทนจำนวนชั่วโมงที่ทำงานจริง ถ้าช่างซ่อมไฟฟ้าทำงานบ้านหลังหนึ่งเสร็จสิ้นโดยใช้เวลาไป 4 ชั่วโมง เขาจะได้รับเงินค่าแรงทั้งหมดกี่บาท",
+    choices: [
+      "1,400 บาท",
+      "500 บาท",
+      "354 บาท",
+      "1,250 บาท"
+    ],
+    a: 1,
+    exp: "แทนค่าชั่วโมง (h = 4) ลงในสูตรสมการรายได้: รายได้ = 300 + (50 × 4) ตามหลักคณิตศาสตร์ต้องคำนวณในวงเล็บก่อน จะได้ 50 × 4 = 200 จากนั้นนำไปบวกกับค่าเดินทางตายตัว 300 จะได้เงินค่าแรงทั้งหมด = 300 + 200 = 500 บาท"
+  }
+];
+
+let state = {
+  screen: 'login', studentName: '', studentId: '', questions: [], answers: [], checked: [], current: 0
+};
+
+function shuffleArray(arr) {
+  let newArr = arr.slice();
+  for (let i = newArr.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+  }
+  return newArr;
+}
+
+function startApp() {
+  const nameInput = document.getElementById('s_name').value;
+  const idInput = document.getElementById('s_id').value;
+  if (!nameInput.trim()) { alert('กรุณากรอกชื่อ-นามสกุลก่อนเข้าสอบครับ'); return; }
+  
+  state.studentName = nameInput;
+  state.studentId = idInput || 'สกร. ระดับประถมศึกษา';
+  document.getElementById('subtitle-text').innerText = 'ผู้เข้าสอบ: ' + state.studentName;
+  
+  let shuffledDB = shuffleArray(database);
+  state.questions = [];
+  
+  for (let i = 0; i < shuffledDB.length; i++) {
+    let q = shuffledDB[i];
+    let correctText = q.choices[q.a];
+    let newChoices = shuffleArray(q.choices);
+    let newCorrectIndex = newChoices.indexOf(correctText);
+    
+    state.questions.push({
+      cat: q.cat, q: q.q, exp: q.exp, choices: newChoices, correctAnswer: newCorrectIndex
+    });
+  }
+  
+  state.answers = new Array(state.questions.length).fill(null);
+  state.checked = new Array(state.questions.length).fill(false);
+  state.current = 0;
+  state.screen = 'quiz';
+  renderApp();
+}
+
+function renderApp() {
+  const app = document.getElementById('app');
+  if (state.screen === 'login') {
+    app.innerHTML = `
+      <div class="card" style="text-align: center; padding: 40px 20px;">
+        <div style="font-size: 60px; margin-bottom: 10px;">🧮</div>
+        <h2 style="color: var(--primary-dark); margin-bottom: 10px;">ระบบทดสอบวิชาคณิตศาสตร์ N-NET ประถมศึกษา (ชุดที่ 3)</h2>
+        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">ข้อสอบประยุกต์ใช้ทักษะการคำนวณในชีวิตจริง มีข้อมูลลวงท้าทายการคิดวิเคราะห์กระบวนการ 20 ข้อ</p>
+        <div class="inp-group">
+          <label class="inp-label">ชื่อ-นามสกุลผู้เข้าสอบ</label>
+          <input type="text" id="s_name" class="inp-text" placeholder="พิมพ์ชื่อและนามสกุลของคุณที่นี่">
+        </div>
+        <div class="inp-group">
+          <label class="inp-label">ระดับชั้น / สังกัด สกร.</label>
+          <input type="text" id="s_id" class="inp-text" value="ระดับประถมศึกษา - คณิตศาสตร์ ชุดที่ 3">
+        </div>
+        <button class="btn btn-primary" style="margin-top: 10px;" onclick="startApp()">เข้าสู่ระบบและเริ่มทำข้อสอบ 🚀</button>
+      </div>
+    `;
+  } 
+  else if (state.screen === 'quiz') {
+    let total = state.questions.length;
+    let curr = state.current;
+    let q = state.questions[curr];
+    let ans = state.answers[curr];
+    let isChecked = state.checked[curr];
+    let pct = Math.round(((curr + 1) / total) * 100);
+    
+    let letters = ['1', '2', '3', '4'];
+    let choicesHTML = '';
+    
+    for (let i = 0; i < 4; i++) {
+      let cssClass = 'choice';
+      if (isChecked) {
+        if (i === q.correctAnswer) cssClass += ' correct';
+        else if (i === ans && ans !== q.correctAnswer) cssClass += ' wrong';
+      } else {
+        if (i === ans) cssClass += ' selected';
+      }
+      choicesHTML += `<button class="${cssClass}" ${isChecked ? 'disabled' : ''} onclick="selectAnswer(${i})">
+                        <div class="c-let">${letters[i]}</div>
+                        <div>${q.choices[i]}</div>
+                      </button>`;
+    }
+    
+    let fbHTML = isChecked ? (
+      ans === q.correctAnswer 
+        ? `<div class="feedback ok">✅ <strong>ถูกต้อง! วิธีคิดคำนวณของคุณแม่นยำมาก</strong><div class="fb-explain">💡 <span style='font-weight:700;'>แนวคิดหลัก:</span> ${q.exp}</div></div>`
+        : `<div class="feedback no">❌ <strong>คำตอบยังไม่ถูกต้องหรือหลงกลข้อตัวลวง</strong> — ตรวจสอบขั้นตอนที่ถูกในแถบสีเขียว<div class="fb-explain">💡 <span style='font-weight:700;'>คำอธิบายละเอียด:</span> ${q.exp}</div></div>`
+    ) : '';
+    
+    let btnPrev = curr > 0 ? `<button class="btn btn-secondary" onclick="goPrev()">← ข้อก่อนหน้า</button>` : `<div style="width:48%"></div>`;
+    let btnNext = isChecked ? (
+      curr === total - 1 ? `<button class="btn btn-primary" onclick="showResult()">ส่งกระดาษคำตอบประมวลผล 🏆</button>` : `<button class="btn btn-primary" onclick="goNext()">ข้อถัดไป →</button>`
+    ) : `<button class="btn btn-primary" ${ans === null ? 'disabled' : ''} onclick="checkAnswer()">ส่งคำตอบตรวจวิเคราะห์ ✓</button>`;
+    
+    let dotsHTML = '<div class="dot-nav">';
+    for (let i = 0; i < total; i++) {
+      let dClass = 'dot';
+      if (i === curr) dClass += ' active';
+      else if (state.checked[i]) dClass += (state.answers[i] === state.questions[i].correctAnswer) ? ' ok' : ' no';
+      dotsHTML += `<button class="${dClass}" onclick="jumpTo(${i})">${i+1}</button>`;
+    }
+    dotsHTML += '</div>';
+
+    app.innerHTML = `
+      <div class="card" style="padding: 16px 20px;">
+        <div class="prog-text"><span>ข้อที่ ${curr + 1} จาก ${total}</span><span>ความคืบหน้า ${pct}%</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width: ${pct}%"></div></div>
+      </div>
+      <div class="card">
+        <div class="q-badge">แกนทักษะ: ${q.cat}</div>
+        <div class="q-text">${q.q}</div>
+        <div class="choices">${choicesHTML}</div>
+        ${fbHTML}
+        <div class="nav-buttons">${btnPrev}${btnNext}</div>
+      </div>
+      ${dotsHTML}
+    `;
+  }
+  else if (state.screen === 'result') {
+    let total = state.questions.length;
+    let score = 0;
+    let catStats = {};
+    
+    for (let i = 0; i < total; i++) {
+      let q = state.questions[i];
+      if (!catStats[q.cat]) catStats[q.cat] = { total: 0, correct: 0 };
+      catStats[q.cat].total++;
+      if (state.answers[i] === q.correctAnswer) { score++; catStats[q.cat].correct++; }
+    }
+    
+    let pct = Math.round((score / total) * 100);
+    
+    let analysisHTML = '';
+    for (let cat in catStats) {
+      let cPct = Math.round((catStats[cat].correct / catStats[cat].total) * 100);
+      let isWeak = cPct < 60;
+      let tagClass = isWeak ? 'weak' : 'good';
+      let tagText = isWeak ? '⚠️ จุดที่ต้องปรับปรุงกระบวนการคิด' : '✅ บรรลุสมรรถนะการวิเคราะห์เชิงตัวเลข';
+      
+      let advice = '';
+      if(cat === "จำนวนและการดำเนินการ") advice = isWeak ? 'ยังสับสนกับข้อมูลลวงที่โจทย์ให้มาเกินความจำเป็น ควรฝึกอ่านโจทย์แล้วตัดตัวเลขที่ไม่เกี่ยวข้องออกก่อนคำนวณ' : 'ยอดเยี่ยม! คุณสามารถแยกแยะข้อมูลจริงออกจากข้อมูลลวงในโจทย์ปัญหาหลายขั้นตอนได้อย่างถูกต้อง';
+      else if(cat === "เศษส่วนและทศนิยม") advice = isWeak ? 'มักคลาดเคลื่อนในเรื่องการหารเศษส่วน (ลืมกลับเศษเป็นส่วน) และการคำนวณราคาต่อหน่วยเปรียบเทียบความคุ้มค่า' : 'มีความเข้าใจดีมากในการเปรียบเทียบค่าทศนิยมราคาต่อหน่วยและหลักเกณฑ์เศษส่วนในชีวิตจริง';
+      else if(cat === "ร้อยละและอัตราส่วน") advice = isWeak ? 'ระวังความสับสนระหว่างจำนวนเงินส่วนลดกับราคาขายสุทธิ และฝึกฝนการขยายอัตราส่วนสัดส่วนให้ชำนาญขึ้น' : 'ยอดเยี่ยมมาก! เข้าใจการหาดอกเบี้ยเงินกู้ การคำนวณสัดส่วนผสม และราคาขายหลังหักเปอร์เซ็นต์ส่วนลด';
+      else if(cat === "การวัด ความยาว และมาตราส่วน") advice = isWeak ? 'ควรระวังเรื่องการแปลงหน่วยน้ำหนัก (ตันเป็นกิโลกรัม) และการแปลงระยะมาตราส่วนแผนผังฐานสิบ' : 'เก่งมาก! สามารถเชื่อมโยงหน่วยมาตราส่วนแผนผังเข้ากับระยะจริง และแม่นยำเรื่องหน่วยน้ำหนักมาตรฐาน';
+      else if(cat === "เรขาคณิต พื้นที่ และปริมาตร") advice = isWeak ? 'จุดที่ต้องระวังที่สุดคือการดูหน่วยความยาวก่อนคำนวณ (เช่น เมตรกับเซนติเมตร) และการแยกความต่างระหว่างสูตรพื้นที่กับความยาวรอบรูป' : 'โดดเด่นมาก! ไม่โดนหน่วยลวงหลอก สามารถสลับมิติคิดจากเส้นรอบรูปกลับมาหาพื้นที่ และคำนวณความจุบ่อน้ำได้อย่างดี';
+      else if(cat === "สถิติ แผนภูมิ และความน่าจะเป็น") advice = isWeak ? 'ฝึกทบทวนการหาค่าเฉลี่ย และการแปลงสัดส่วนจำนวนเงินจริงให้เป็นเปอร์เซ็นต์ (%) บนแผนภูมิรูปวงกลม' : 'มีความสามารถในการอ่านตารางประมวลผลค่าเฉลี่ยเลขคณิต รวมถึงเข้าใจอัตราความน่าจะเป็นของการสุ่มหยิบของอย่างดี';
+      else if(cat === "พีชคณิตและสมการเบื้องต้น") advice = isWeak ? 'ยังสับสนเรื่องการเปลี่ยนข้อความภาษาไทยให้เป็นเครื่องหมายทางคณิตศาสตร์ในสมการ และลำดับการคำนวณก่อน-หลัง' : 'ดีเลิศ! ถอดสมการโจทย์ปัญหาได้แม่นยำ และเข้าใจหลักการคำนวณเครื่องหมายในวงเล็บตามสูตรพีชคณิตได้ถูกต้อง';
+
+      analysisHTML += `
+        <div class="analysis-item ${isWeak ? 'weak' : 'good'}">
+          <span class="analysis-tag ${tagClass}">${tagText}</span>
+          <div style="font-weight: 700; font-size: 15px; margin-bottom: 2px;">หมวดสาระ: ${cat}</div>
+          <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">สอบผ่านสุทธิ ${catStats[cat].correct} จาก ${catStats[cat].total} ข้อ (${cPct}%)</div>
+          <div style="font-size: 13px; line-height:1.4;">💡 <strong>คำแนะนำจากระบบ:</strong> ${advice}</div>
+        </div>
+      `;
+    }
+
+    let reviewHTML = '<div class="card" style="margin-top:20px"><div style="font-weight:700; margin-bottom:12px;">📋 รายงานการวิเคราะห์ผลการคำนวณรายข้อ</div>';
+    for (let i = 0; i < total; i++) {
+      let q = state.questions[i];
+      let isCorr = (state.answers[i] === q.correctAnswer);
+      reviewHTML += `
+        <div class="review-item">
+          <div class="r-q"><span class="ri-tick ${isCorr?'ok':'no'}">${isCorr?'✓':'✗'}</span> ข้อที่ ${i+1}: ${q.q}</div>
+          <div class="r-a" style="color:var(--text-muted)">คำตอบของท่าน: ${state.answers[i] !== null ? q.choices[state.answers[i]] : 'ไม่ได้ระบุคำตอบ'}</div>
+          <div class="r-a" style="color:var(--green); font-weight:600;">แนวคิดและผลลัพธ์ที่ถูกต้อง: ${q.choices[q.correctAnswer]}</div>
+        </div>
+      `;
+    }
+    reviewHTML += '</div>';
+
+    app.innerHTML = `
+      <div class="card" style="text-align:center; padding:32px 20px;">
+        <h3 style="color:var(--primary-dark); margin-bottom:6px;">รายงานสรุปผลการประเมินวิชาคณิตศาสตร์ N-NET</h3>
+        <div style="font-size:18px; font-weight:700;">นักศึกษา: ${state.studentName}</div>
+        <div style="font-size:13px; color:var(--text-muted); margin-bottom:24px;">ระดับชั้น: ${state.studentId}</div>
+        
+        <div style="font-size:56px; font-weight:800; color:var(--primary-dark); line-height:1;">${score}</div>
+        <div style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">คะแนนที่ได้ (จากข้อสอบปรนัยทั้งหมด ${total} ข้อ)</div>
+        
+        <div class="grid-stats">
+          <div class="stat-box"><div class="stat-num green">${score}</div><div style="font-size:12px;color:var(--text-muted)">ตอบถูก (ข้อ)</div></div>
+          <div class="stat-box"><div class="stat-num red">${total - score}</div><div style="font-size:12px;color:var(--text-muted)">พลาด (ข้อ)</div></div>
+          <div class="stat-box"><div class="stat-num blue">${pct}%</div><div style="font-size:12px;color:var(--text-muted)">ความแม่นยำรวม</div></div>
+        </div>
+      </div>
+
+      <div class="analysis-card">
+        <div class="analysis-header">📊 สมรรถนะการแก้โจทย์ปัญหาเชิงประยุกต์รายด้าน</div>
+        ${analysisHTML}
+      </div>
+      
+      <button class="btn btn-primary" onclick="location.reload()">🔄 สุ่มสลับข้อและช้อยส์ใหม่เพื่อฝึกทำอีกครั้ง</button>
+      ${reviewHTML}
+    `;
+  }
+}
+
+function selectAnswer(index) { if (state.checked[state.current]) return; state.answers[state.current] = index; renderApp(); }
+function checkAnswer() { if (state.answers[state.current] === null) return; state.checked[state.current] = true; renderApp(); }
+function goNext() { if (state.current < state.questions.length - 1) { state.current++; renderApp(); } }
+function goPrev() { if (state.current > 0) { state.current--; renderApp(); } }
+function jumpTo(index) { state.current = index; renderApp(); }
+function showResult() { state.screen = 'result'; renderApp(); }
+
+renderApp();
+</script>
+</body>
+</html>
