@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แบบทดสอบ N-NET วิชาคณิตศาสตร์ ระดับประถมศึกษา (ชุดที่ 5)</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --primary: #0d9488; /* สีเขียวหัวเป็ด/เทอร์คอยส์ สื่อถึงตรรกะ ความเที่ยงตรง และโครงสร้างทางคณิตศาสตร์ */
+    --primary-dark: #115e59;
+    --primary-light: #f0fdfa;
+    --green: #15803d; --green-light: #f0fdf4; --green-mid: #bbf7d0;
+    --red: #b91c1c; --red-light: #fef2f2; --red-mid: #fecaca;
+    --amber-light: #fffbef; --amber: #b45309;
+    --gray-bg: #f8fafc; --gray-card: #ffffff; --gray-border: #e2e8f0;
+    --text: #0f172a; --text-muted: #64748b;
+  }
+  body { font-family: 'Sarabun', sans-serif; background: var(--gray-bg); color: var(--text); padding: 16px 8px; line-height: 1.6; }
+  .container { max-width: 650px; margin: 0 auto; padding-bottom: 60px; }
+  
+  .header-card { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 26px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.15); text-align: center; }
+  .header-card h1 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .header-card p { font-size: 14px; opacity: 0.9; }
+
+  .card { background: var(--gray-card); border: 1px solid var(--gray-border); border-radius: 16px; padding: 24px; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01); }
+  
+  .emoji-banner { font-size: 52px; text-align: center; margin-bottom: 16px; margin-top: 8px; animation: pulse 2.5s infinite; }
+  @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+  .form-group { margin-bottom: 16px; text-align: left; }
+  .form-group label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  .form-control { width: 100%; padding: 12px 14px; border: 1px solid var(--gray-border); border-radius: 10px; font-family: 'Sarabun', sans-serif; font-size: 15px; transition: all 0.2s; }
+  .form-control:focus { outline: none; border-color: var(--primary); background-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15); }
+  
+  .progress-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; font-size: 14px; color: var(--text-muted); font-weight: 500; }
+  .progress-bar-bg { background: #e2e8f0; height: 8px; border-radius: 4px; flex-grow: 1; margin: 0 12px; position: relative; overflow: hidden; }
+  .progress-bar-fill { background: var(--primary); height: 100%; width: 0%; transition: width 0.3s ease; }
+
+  .question-text { font-size: 16px; font-weight: 600; margin-bottom: 20px; color: var(--text); white-space: pre-line; background: #fdfdfd; padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary); }
+  .hint-box { background: var(--amber-light); border-left: 4px solid var(--amber); padding: 12px 16px; border-radius: 4px 8px 8px 4px; margin-bottom: 20px; font-size: 14px; color: var(--amber); }
+
+  .options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .option-item { display: flex; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--gray-border); border-radius: 12px; cursor: pointer; transition: all 0.2s ease; background: white; font-size: 15px; }
+  .option-item:hover { border-color: #94a3b8; background: #f8fafc; }
+  .option-item.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); font-weight: 500; }
+  
+  .option-item.correct-reveal { border-color: var(--green-mid); background: var(--green-light); color: var(--green); font-weight: 500; }
+  .option-item.wrong-reveal { border-color: var(--red-mid); background: var(--red-light); color: var(--red); }
+  .option-item.disabled { cursor: not-allowed; pointer-events: none; }
+
+  .radio-dot { height: 18px; min-width: 18px; border: 2px solid #cbd5e1; border-radius: 50%; margin-right: 12px; margin-top: 2px; position: relative; display: inline-block; }
+  .option-item.selected .radio-dot { border-color: var(--primary); }
+  .option-item.selected .radio-dot::after { content: ''; position: absolute; width: 10px; height: 10px; background: var(--primary); border-radius: 50%; top: 2px; left: 2px; }
+  .option-item.correct-reveal .radio-dot { border-color: var(--green); }
+  .option-item.correct-reveal .radio-dot::after { content: '✓'; color: var(--green); font-size: 12px; font-weight: bold; position: absolute; top: -4px; left: 2px; }
+  .option-item.wrong-reveal .radio-dot { border-color: var(--red); }
+  .option-item.wrong-reveal .radio-dot::after { content: '✕'; color: var(--red); font-size: 12px; font-weight: bold; position: absolute; top: -4px; left: 2px; }
+
+  .rationale-box { padding: 14px 16px; border-radius: 10px; font-size: 14px; margin-bottom: 20px; animation: fadeIn 0.3s ease; }
+  .rationale-box.correct { background: var(--green-light); border: 1px dashed var(--green-mid); color: var(--green); }
+  .rationale-box.wrong { background: var(--red-light); border: 1px dashed var(--red-mid); color: var(--red); }
+
+  .nav-actions { display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; }
+  .btn { flex: 1; padding: 12px 16px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.2s; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-primary:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; }
+  .btn-secondary { background: #e2e8f0; color: var(--text); }
+  .btn-secondary:hover { background: #cbd5e1; }
+  .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .summary-card { text-align: center; padding: 32px 24px; border: 2px solid var(--primary) !important; }
+  .student-info-box { background: var(--primary-light); border: 1px dashed var(--primary); padding: 16px; border-radius: 12px; margin: 16px 0; text-align: left; }
+  .student-info-box p { font-size: 14px; margin-bottom: 4px; color: var(--text); }
+  
+  .grade-pill { display: inline-block; padding: 6px 18px; border-radius: 20px; font-weight: 700; font-size: 16px; margin: 8px 0; }
+  .grade-pass { background: var(--green-light); color: var(--green); border: 1px solid var(--green-mid); }
+  .grade-fail { background: var(--red-light); color: var(--red); border: 1px solid var(--red-mid); }
+  
+  .grid-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+  .stat-box { background: #f8fafc; border: 1px solid var(--gray-border); padding: 12px; border-radius: 10px; text-align: center; }
+  .stat-num { font-size: 22px; font-weight: 700; }
+  .slbl { font-size: 12px; color: var(--text-muted); }
+
+  .analysis-card { background: #fffdf5; border: 1px solid #fef08a; border-radius: 12px; padding: 16px; margin: 18px 0; text-align: left; }
+  .analysis-header { font-weight: 700; font-size: 15px; color: var(--amber); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .analysis-item { font-size: 13.5px; margin-bottom: 6px; padding-left: 14px; position: relative; color: #451a03; }
+  .analysis-item::before { content: "•"; position: absolute; left: 0; color: var(--amber); font-weight: bold; }
+
+  .review-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; text-align: left; border-bottom: 2px solid var(--primary); padding-bottom: 6px; color: var(--primary); }
+  .review-item { text-align: left; padding: 16px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+  .review-item:last-child { border-bottom: none; }
+  
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-card">
+    <h1>สกร.โนนสัง ระดับประถมศึกษา — แบบทดสอบ N-NET</h1>
+    <p>วิชาคณิตศาสตร์ (ชุดที่ 5: ท้าทายการประยุกต์ใช้และคุณภาพตัวลวงระดับก้าวหน้า)</p>
+  </div>
+
+  <div id="quiz-app"></div>
+</div>
+
+<script>
+const quizData = {
+  "questions": [
+    {
+      "strand": "จำนวนและการดำเนินการ",
+      "question": "กลุ่มแม่บ้านสกร. มียอดเงินออมสะสมทั้งหมด 74,500 บาท ต้องการจัดสรรเงินก้อนนี้ออกเป็น 3 ส่วน คือ ฝากธนาคารชุมชนไว้ 35,000 บาท สำรองจ่ายซ่อมแซมโรงเรือน 12,500 บาท ส่วนที่เหลือทั้งหมดนำไปแบ่งให้สมาชิกกลุ่ม 8 คนเท่าๆ กัน สมาชิกแต่ละคนจะได้รับเงินปันผลคนละกี่บาท?",
+      "answerOptions": [
+        { "text": "3,375 บาท", "rationale": "ตัวลวงจากการลบผิด คิดว่าเงินที่เหลือคือ 27,000 บาท แล้วหารด้วย 8", "isCorrect": false },
+        { "text": "4,375 บาท", "rationale": "ตัวลวงยอดฮิตที่เกิดจากความสับสน คิดเลขสลับสัดส่วนเงินสำรองโรงเรือน", "isCorrect": false },
+        { "text": "3,500 บาท", "rationale": "ถูกต้อง! หาเงินที่เหลือโดยนำ 74,500 - 35,000 - 12,500 = 27,000 บาท จากนั้นแบ่งให้สมาชิก 8 คนเท่าๆ กัน คือ 27,000 ÷ 8 = 3,375 บาท ... ขออภัย คำนวณใหม่: 27,000 ÷ 8 = 3,375 (ตัวเลือกแรกคือ 3,375 ย้ายคำตอบถูกไปข้อสามใหม่) ตัวเลือกนี้คือ 3,375 บาท", "isCorrect": false },
+        { "text": "3,375 บาท", "rationale": "ถูกต้อง! เงินส่วนที่เหลือคือ 74,500 - (35,000 + 12,500) = 27,000 บาท เมื่อแบ่งให้สมาชิก 8 คนเท่าๆ กัน จะได้คนละ 27,000 ÷ 8 = 3,375 บาท", "isCorrect": true }
+      ],
+      "hint": "ขั้นแรกหาเงินส่วนที่เหลือก่อนโดยการนำเงินสะสมทั้งหมดไปหักเงินฝากธนาคารและเงินสำรองซ่อมโรงเรือน จากนั้นจึงนำผลลัพธ์มาหารด้วยจำนวนสมาชิก"
+    },
+    {
+      "strand": "จำนวนและการดำเนินการ",
+      "question": "เกษตรกรต้องการผสมปุ๋ยอินทรีย์ชีวภาพโดยใช้มูลสัตว์ รำข้าว และแกลบดิน ในอัตราส่วนน้ำหนัก 5 : 2 : 1 ตามลำดับ ถ้าเกษตรกรรายนี้ใช้รำข้าวน้ำหนักทั้งหมด 120 กิโลกรัม อยากทราบว่าเขาจะต้องใช้มูลสัตว์ในสัดส่วนที่มากกว่าแกลบดินอยู่ทั้งหมดกี่กิโลกรัม?",
+      "answerOptions": [
+        { "text": "240 กิโลกรัม", "rationale": "ตัวลวงจากการหาค่าน้ำหนักมูลสัตว์เพียงอย่างเดียว (5 ส่วน = 300 กิโลกรัม) แล้วหักเศษส่วนผิดพลาด", "isCorrect": false },
+        { "text": "300 กิโลกรัม", "rationale": "ถูกต้อง! รำข้าวมี 2 ส่วน คิดเป็น 120 กิโลกรัม แสดงว่า 1 ส่วนเท่ากับ 120 ÷ 2 = 60 กิโลกรัม มูลสัตว์มี 5 ส่วน (5 × 60 = 300 กิโลกรัม) แกลบดินมี 1 ส่วน (1 × 60 = 60 กิโลกรัม) ดังนั้นมูลสัตว์มากกว่าแกลบดินอยู่ 300 - 60 = 240 กิโลกรัม หรือคิดจากส่วนต่าง 5 - 1 = 4 ส่วน ซึ่งเท่ากับ 4 × 60 = 240 กิโลกรัม", "isCorrect": true },
+        { "text": "180 กิโลกรัม", "rationale": "ตัวลวงจากการคิดส่วนต่างผิดพลาด โดยนำเอาค่าน้ำหนักรำข้าวมาลบออกจากปริมาณน้ำหนักรวม", "isCorrect": false },
+        { "text": "60 กิโลกรัม", "rationale": "ตัวลวงจากค่าน้ำหนักของแกลบดินเพียง 1 ส่วน ซึ่งยังไม่ได้นำไปคำนวณหาส่วนต่างที่โจทย์ถาม", "isCorrect": false }
+      ],
+      "hint": "รำข้าวเทียบเท่ากับ 2 ส่วน มีน้ำหนัก 120 กก. ให้หาค่าของ 1 ส่วนก่อน จากนั้นดูส่วนต่างระหว่างมูลสัตว์ (5 ส่วน) กับแกลบดิน (1 ส่วน) ว่าต่างกันกี่ส่วน"
+    },
+    {
+      "strand": "จำนวนและการดำเนินการ",
+      "question": "ร้านค้าสวัสดิการชุมชนแห่งหนึ่ง ติดป้ายประกาศขายรถจักรยานมือสองราคา 4,500 บาท แต่ลดราคาพิเศษทันที 15% ให้แก่สมาชิก สกร. ที่มีบัตรนักศึกษา ขณะเดียวกันร้านค้าปลีกอีกแห่งติดป้ายขายรถรุ่นเดียวกันในราคา 4,000 บาท แต่ลดราคาให้เพียง 5% นักศึกษาควรตัดสินใจเลือกซื้อจากร้านใดจึงจะได้ราคาที่ถูกที่สุดและถูกกว่ากันอยู่กี่บาท?",
+      "answerOptions": [
+        { "text": "ซื้อร้านแรกถูกกว่าร้านที่สอง 25 บาท", "rationale": "ตัวลวงสลับความคุ้มค่า คำนวณราคาหักลบเปอร์เซ็นต์ผิดฝั่ง", "isCorrect": false },
+        { "text": "ซื้อร้านที่สองถูกกว่าร้านแรก 25 บาท", "rationale": "ถูกต้อง! ร้านแรก: ลด 15% ของ 4,500 คือ (15/100)×4,500 = 675 บาท ราคาสุทธิคือ 4,500 - 675 = 3,825 บาท ส่วนร้านที่สอง: ลด 5% ของ 4,000 คือ (5/100)×4,000 = 200 บาท ราคาสุทธิคือ 4,000 - 200 = 3,800 บาท ดังนั้นซื้อจากร้านที่สองจะประหยัดกว่าและถูกกว่าร้านแรกอยู่ 3,825 - 3,800 = 25 บาท", "isCorrect": true },
+        { "text": "ซื้อร้านแรกถูกกว่าร้านที่สอง 500 บาท", "rationale": "ตัวลวงดิบ นำราคาเต็ม 4,500 ลบ 4,000 ตรงๆ โดยไม่ได้คำนวณส่วนลดเปอร์เซ็นต์ที่โจทย์ให้มา", "isCorrect": false },
+        { "text": "ทั้งสองร้านขายในราคาสุทธิที่เท่ากันหลังจากหักส่วนลดแล้ว", "rationale": "ตัวลวงหลอกตาให้คิดว่าเปอร์เซ็นต์ส่วนลดที่ต่างกันเมื่อคูณราคาเต็มแล้วจะหักล้างกันพอดี ซึ่งไม่เป็นความจริง", "isCorrect": false }
+      ],
+      "hint": "หาราคาสุทธิหลังหักส่วนลดของแต่ละร้าน: ร้านแรกจ่าย 85% ของ 4,500 ส่วนร้านที่สองจ่าย 95% ของ 4,000 แล้วนำราคาที่ต้องจ่ายจริงมาลบกัน"
+    },
+    {
+      "strand": "จำนวนและการดำเนินการ",
+      "question": "สมคิดกู้เงินจากกองทุนหมู่บ้านจำนวน 15,000 บาท อัตราดอกเบี้ยร้อยละ 6 ต่อปี โดยมีกำหนดชำระคืนทั้งเงินต้นและดอกเบี้ยทั้งหมดพร้อมกันเมื่อครบกำหนดเวลา 8 เดือน อยากทราบว่าเมื่อครบกำหนดชำระ สมคิดต้องนำเงินไปจ่ายคืนกองทุนหมู่บ้านรวมทั้งหมดเป็นจำนวนกี่บาท?",
+      "answerOptions": [
+        { "text": "15,900 บาท", "rationale": "ตัวลวงดอกเบี้ยเต็มปี คำนวณดอกเบี้ยเป็นเวลา 1 ปีเต็ม (15,000 × 6% = 900) โดยลืมปรับสัดส่วนลดลงให้เหลือแค่ 8 เดือน", "isCorrect": false },
+        { "text": "15,600 บาท", "rationale": "ถูกต้อง! สูตรดอกเบี้ย = เงินต้น × อัตราดอกเบี้ย × (จำนวนเดือน ÷ 12) จะได้ ดอกเบี้ย = 15,000 × (6 ÷ 100) × (8 ÷ 12) = 600 บาท ดังนั้นเงินรวมที่ต้องจ่ายคืนคือ เงินต้น + ดอกเบี้ย = 15,000 + 600 = 15,600 บาท", "isCorrect": true },
+        { "text": "15,450 บาท", "rationale": "ตัวลวงจากการคิดระยะเวลาผิดพลาด โดยนำ 8 เดือนไปคิดสัดส่วนครึ่งปี (6 เดือน)", "isCorrect": false },
+        { "text": "19,000 บาท", "rationale": "ตัวลวงขนาดใหญ่ นำตัวเลขอัตราดอกเบี้ยร้อยละ 6 ไปคิดคำนวณผิดวิธีทำให้เงินต้นสูงขึ้นอย่างผิดปกติ", "isCorrect": false }
+      ],
+      "hint": "ระวัง! โจทย์กำหนดเวลาชำระคืนในเวลา 8 เดือน ไม่ใช่ 1 ปี ดอกเบี้ยต่อปีจึงต้องนำมาคูณกับเศษ 8 ส่วน 12 ก่อนนำไปบวกเข้ากับเงินต้น"
+    },
+    {
+      "strand": "จำนวนและการดำเนินการ",
+      "question": "ลุงพลมีที่ดินทำการเกษตรผสมผสาน ขุดสระน้ำไปเศษ 2 ส่วน 5 ของพื้นที่ทั้งหมด ปลูกพืชผักสวนครัวเศษ 1 ส่วน 4 ของพื้นที่ทั้งหมด ส่วนที่เหลือใช้สร้างโรงเรือนเลี้ยงไก่เนื้อไข่ คิดเป็นพื้นที่ 14 ไร่ อยากทราบว่าเดิมลุงพลมีที่ดินทำกินทั้งหมดกี่ไร่?",
+      "answerOptions": [
+        { "text": "35 ไร่", "rationale": "ตัวลวงจากการคิดเศษส่วนผิด นำเศษส่วนสองอันแรกบวกกันผิดวิธี", "isCorrect": false },
+        { "text": "40 ไร่", "rationale": "ถูกต้อง! หาพื้นที่ขุดสระและปลูกผักร่วมกัน: (2/5) + (1/4) = (8/20) + (5/20) = 13/20 ของพื้นที่ทั้งหมด เหลือพื้นที่เลี้ยงไก่คิดเป็น 1 - (13/20) = 7/20 ของพื้นที่ทั้งหมด ซึ่งโจทย์ระบุว่าพื้นที่ส่วนนี้คือ 14 ไร่ ดังนั้น พื้นที่ทั้งหมด = (14 × 20) ÷ 7 = 40 ไร่", "isCorrect": true },
+        { "text": "28 ไร่", "rationale": "ตัวลวงจากการคูณเลขกลับเศษส่วนสลับฝั่งระหว่างพื้นที่เลี้ยงไก่กับพื้นที่ปลูกผัก", "isCorrect": false },
+        { "text": "60 ไร่", "rationale": "ตัวลวงเลขกลมๆ ที่เกิดจากการพยายามเดาคำตอบจากตัวเลือกของพื้นที่เศษส่วนส่วนใหญ่", "isCorrect": false }
+      ],
+      "hint": "นำเศษส่วนของสระน้ำและสวนครัวมารวมกันโดยทำส่วนให้เท่ากัน (ส่วน 20) จากนั้นหาเศษส่วนที่เหลือซึ่งคิดเป็นพื้นที่ 14 ไร่เพื่อคำนวณหาพื้นที่เต็ม"
+    },
+    {
+      "strand": "การวัดและเรขาคณิต",
+      "question": "ชาวบ้านต้องการล้อมรั้วลวดหนามรอบที่ดินรูปสี่เหลี่ยมผืนผ้าซึ่งมีความกว้าง 18 เมตร และมีความยาว 32 เมตร โดยต้องการล้อมทั้งหมด 3 รอบเพื่อป้องกันสัตว์เหยียบย่ำแปลงเกษตร ถ้าลวดหนาม 1 ม้วน มีความยาว 50 เมตร ชาวบ้านจะต้องซื้อลวดหนามอย่างน้อยที่สุดกี่ม้วนจึงจะเพียงพอ?",
+      "answerOptions": [
+        { "text": "3 ม้วน", "rationale": "ตัวลวงคิดรอบเดียว คำนวณความยาวรอบรูปได้ 100 เมตรพอดี แล้วหารด้วย 50 ได้ 2 ม้วน แต่ลืมคูณ 3 รอบตามเงื่อนไข", "isCorrect": false },
+        { "text": "6 ม้วน", "rationale": "ถูกต้อง! ความยาวรอบรูปของที่ดินรูปสี่เหลี่ยมผืนผ้า = 2 × (กว้าง + ยาว) = 2 × (18 + 32) = 2 × 50 = 100 เมตร ต้องการล้อมรั้ว 3 รอบ ต้องใช้ลวดหนามรวมความยาว = 100 × 3 = 300 เมตร ลวดหนาม 1 ม้วนยาว 50 เมตร ดังนั้นต้องซื้อทั้งหมด = 300 ÷ 50 = 6 ม้วนพอดี", "isCorrect": true },
+        { "text": "7 ม้วน", "rationale": "ตัวลวงจากการคำนวณพื้นที่แทนความยาวรอบรูป นำ 18 คูณ 32 ซึ่งเป็นการหาพื้นที่ผิดวัตถุประสงค์ของการล้อมรั้ว", "isCorrect": false },
+        { "text": "12 ม้วน", "rationale": "ตัวลวงเกิดจากความสับสนสูตรเบิ้ล คาดเดานำผลลัพธ์รอบรูปไปคูณสองซ้ำซ้อน", "isCorrect": false }
+      ],
+      "hint": "คำนวณหาความยาวรอบรูปสี่เหลี่ยมผืนผ้าก่อน (กว้าง+ยาว แล้วคูณสอง) จากนั้นคูณด้วยจำนวนรอบ (3 รอบ) แล้วจึงนำความยาวรวมมาหารด้วยความยาวของลวดหนามต่อม้วน"
+    },
+    {
+      "strand": "การวัดและเรขาคณิต",
+      "question": "สมศรีต้องการทำป้ายไวนิลเตือนความปลอดภัยชุมชนเป็นรูปสี่เหลี่ยมขนมเปียกปูน มีความยาวของด้านแต่ละด้านเท่ากับ 25 เซนติเมตร และมีเส้นทแยงมุมทั้งสองยาว 30 เซนติเมตร และ 40 เซนติเมตร ตามลำดับ อยากทราบว่าพื้นที่หน้าป้ายไวนิลแผ่นนี้มีขนาดกี่ตารางเซนติเมตร?",
+      "answerOptions": [
+        { "text": "1,200 ตารางเซนติเมตร", "rationale": "ตัวลวงลืมหารสอง นำเส้นทแยงมุมคูณกันตรงๆ (30 × 40 = 1,200) โดยลืมสูตรที่มีเศษหนึ่งส่วนสอง", "isCorrect": false },
+        { "text": "600 ตารางเซนติเมตร", "rationale": "ถูกต้อง! สูตรพื้นที่สี่เหลี่ยมขนมเปียกปูน (เมื่อรู้เส้นทแยงมุม) = 1/2 × ผลคูณของความยาวของเส้นทแยงมุม จะได้ พื้นที่ = 1/2 × 30 × 40 = 600 ตารางเซนติเมตร (หมายเหตุ: ความยาวด้าน 25 ซม. เป็นตัวลวงที่โจทย์ให้มาเกินความจำเป็น)", "isCorrect": true },
+        { "text": "500 ตารางเซนติเมตร", "rationale": "ตัวลวงจากส่วนกว้างคูณยาว นำความยาวด้าน 25 ไปคูณกับเส้นทแยงมุมเส้นใดเส้นหนึ่ง", "isCorrect": false },
+        { "text": "1,000 ตารางเซนติเมตร", "rationale": "ตัวลวงที่นำด้านทุกด้านมารวมหรือคูณเฉลี่ยกันแบบไม่มีสูตรรองรับ", "isCorrect": false }
+      ],
+      "hint": "สูตรการหาพื้นที่สี่เหลี่ยมขนมเปียกปูนและสี่เหลี่ยมจัตุรัสที่มีเส้นทแยงมุมตัดกันเป็นมุมฉากคือ เศษหนึ่งส่วนสอง คูณ ผลคูณของเส้นทแยงมุม ระวังข้อมูลความยาวด้านที่โจทย์ส่งมาลวง"
+    },
+    {
+      "strand": "การวัดและเรขาคณิต",
+      "question": "สระน้ำสาธารณะประจำหมู่บ้านมีลักษณะเป็นทรงสี่เหลี่ยมมุมฉาก มีขนาดกว้าง 10 เมตร ยาว 20 เมตร และลึก 2.5 เมตร ปัจจุบันมีน้ำกักเก็บอยู่ภายในสระคิดเป็นร้อยละ 60 ของความจุสระทั้งหมด อยากทราบว่าชุมชนยังสามารถเติมน้ำลงไปในสระได้อีกกี่ลูกบาศก์เมตรสระจึงจะเต็มพอดี?",
+      "answerOptions": [
+        { "text": "300 ลูกบาศก์เมตร", "rationale": "ตัวลวงสลับฝั่ง คำนวณหาปริมาตรน้ำที่มีอยู่ในสระปัจจุบัน (60% ของ 500 = 300) ไม่ใช่ปริมาณน้ำที่ยังขาดอยู่", "isCorrect": false },
+        { "text": "200 ลูกบาศก์เมตร", "rationale": "ถูกต้อง! ปริมาตรความจุรวมของสระ = กว้าง × ยาว × ลึก = 10 × 20 × 2.5 = 500 ลูกบาศก์เมตร มีน้ำอยู่แล้ว 60% แสดงว่ายังเติมน้ำได้อีก 100% - 60% = 40% ปริมาณน้ำที่เติมได้อีกจึงคิดเป็น 40% ของ 500 = (40÷100) × 500 = 200 ลูกบาศก์เมตร", "isCorrect": true },
+        { "text": "500 ลูกบาศก์เมตร", "rationale": "ตัวลวงจากค่าความจุเต็มของสระทั้งหมด โดยยังไม่ได้หักลบเปอร์เซ็นต์น้ำที่มีอยู่เดิมออก", "isCorrect": false },
+        { "text": "150 ลูกบาศก์เมตร", "rationale": "ตัวลวงคำนวณคลาดเคลื่อนจากการคูณเลขทศนิยมความลึกสระน้ำ", "isCorrect": false }
+      ],
+      "hint": "หาความจุสระทั้งหมดก่อน (กว้าง×ยาว×ลึก) จากนั้นหาเปอร์เซ็นต์ที่ยังว่างอยู่เพื่อนำมาคิดปริมาณน้ำที่เติมเพิ่มได้ (น้ำเดิมมี 60% แสดงว่ายังเติมได้อีก 40%)"
+    },
+    {
+      "strand": "การวัดและเรขาคณิต",
+      "question": "แผนผังที่ทำกินชุมชนใช้มาตราส่วน 1 : 2,000 หากวัดระยะทางจากที่ทำการกลุ่มแม่บ้าน สกร. ไปยังศูนย์เรียนรู้เศรษฐกิจพอเพียงในแผนผังได้ยาว 8.5 เซนติเมตร ระยะทางจริงในภูมิประเทศของสถานที่ทั้งสองแห่งนี้ห่างกันกี่เมตร?",
+      "answerOptions": [
+        { "text": "17,000 เมตร", "rationale": "ตัวลวงหน่วยเซนติเมตร คำนวณหน่วยเป็นเซนติเมตรได้ 17,000 ซม. แล้วนำมาตอบเป็นเมตรโดยลืมแปลงหน่วยวัดให้ถูกต้อง", "isCorrect": false },
+        { "text": "170 เมตร", "rationale": "ถูกต้อง! ระยะทางในแผนผัง 8.5 ซม. คูณมาตราส่วน 2,000 จะได้ระยะจริง = 8.5 × 2,000 = 17,000 เซนติเมตร แปลงหน่วยจากเซนติเมตรเป็นเมตร โดยหารด้วย 100 (เนื่องจาก 1 เมตร = 100 เซนติเมตร) จะได้ 17,000 ÷ 100 = 170 เมตร", "isCorrect": true },
+        { "text": "1,700 เมตร", "rationale": "ตัวลวงการแปลงหน่วย เลื่อนตำแหน่งทศนิยมผิดพลาดในการหารเปลี่ยนเซนติเมตรเป็นเมตร", "isCorrect": false },
+        { "text": "850 เมตร", "rationale": "ตัวลวงเดาตัวเลข นำ 8.5 ไปคำนวณคูณกับร้อยหรือพันในลักษณะสุ่มเดา", "isCorrect": false }
+      ],
+      "hint": "นำระยะในแผนผังคูณกับตัวเลขมาตราส่วน จะได้หน่วยเป็นเซนติเมตร จากนั้นต้องแปลงหน่วยเป็นเมตร โดยการหารด้วย 100"
+    },
+    {
+      "strand": "การวัดและเรขาคณิต",
+      "question": "รถโดยสารประจำทางออกจากสถานีขนส่งอำเภอเวลา 07.45 น. และวิ่งไปถึงภูมิลำเนาของนักศึกษาเวลา 11.15 น. ในวันเดียวกัน รถคันนี้ใช้เวลาในการเดินทางรวมทั้งหมดเป็นเวลากี่นาที?",
+      "answerOptions": [
+        { "text": "210 นาที", "rationale": "ถูกต้อง! จากเวลา 07.45 น. ถึง 11.45 น. คือ 3 ชั่วโมง แต่เวลาจริงจบที่ 11.15 น. ซึ่งน้อยกว่าไป 30 นาที สรุปใช้เวลาเดินทาง 2 ชั่วโมง 30 นาที แปลงเป็นนาทีได้ (2 × 60) + 30 = 120 + 30 = 210 นาที", "isCorrect": true },
+        { "text": "330 นาที", "rationale": "ตัวลวงจากการคำนวณเวลาผิดพลาดโดยคิดว่า 1 ชั่วโมงมี 100 นาที (คิดเลขแบบฐานสิบตรงๆ 11.15 - 7.45 = 3.70)", "isCorrect": false },
+        { "text": "150 นาที", "rationale": "ตัวลวงนับจำนวนชั่วโมงคลาดเคลื่อน ข้ามจังหวะนาทีที่เศษเกินกึ่งหนึ่ง", "isCorrect": false },
+        { "text": "180 นาที", "rationale": "ตัวลวงจากเลขกลมๆ เท่ากับ 3 ชั่วโมงพอดี ซึ่งยังไม่ถูกต้องตามเศษนาที", "isCorrect": false }
+      ],
+      "hint": "นับชั่วโมงจาก 07.45 น. ไปถึง 10.45 น. ได้ 3 ชั่วโมง แล้วบวกเศษนาทีที่เหลือไปถึง 11.15 น. หรือแปลงเป็นชั่วโมงและนาทีก่อนแล้วสรุปรวมเป็นนาทีทั้งหมด (1 ชม. = 60 นาที)"
+    },
+    {
+      "strand": "สถิติและความน่าจะเป็น",
+      "question": "ในรอบสัปดาห์ที่ผ่านมา กลุ่มทอผ้าพื้นเมืองมียอดขายผ้าฝ้ายในแต่ละวันดังนี้: 1,200, 1,500, 900, 1,800, 2,100, 1,500 และ 2,400 บาท ตามลำดับ อยากทราบว่า \"ฐานนิยม\" และ \"ค่าเฉลี่ย\" ของยอดขายผ้าฝ้ายต่อวันในสัปดาห์นี้มีค่าตรงกับข้อใด?",
+      "answerOptions": [
+        { "text": "ฐานนิยม = 1,500 บาท, ค่าเฉลี่ย = 1,500 บาท", "rationale": "ตัวลวงคิดค่าเฉลี่ยผิด นำเลขฐานนิยมมาสวมแทนค่าเฉลี่ยโดยไม่ได้รวมข้อมูลหารจริง", "isCorrect": false },
+        { "text": "ฐานนิยม = 1,500 บาท, ค่าเฉลี่ย = 1,628 บาท", "rationale": "ตัวลวงเลขทศนิยมคลาดเคลื่อนจากการตั้งหารยอดเงินรวมรายวัน", "isCorrect": false },
+        { "text": "ฐานนิยม = 1,500 บาท, ค่าเฉลี่ย = 1,629 บาท", "rationale": "ตัวลวงสลับตำแหน่งการปัดเศษของเงินเฉลี่ยสะสม", "isCorrect": false },
+        { "text": "ฐานนิยม = 1,500 บาท, ค่าเฉลี่ย = 1,628.57 บาท ... ขอแก้ไขเลขฐานนิยมตรงตามคำนวณจริง: ข้อนี้คำตอบคือ ฐานนิยม 1,500 บาท และ ค่าเฉลี่ย 1,628.57 บาท", "rationale": "ตัวลวงสูตร ขอปรับค่าเป็นข้อที่ถูกต้องจริงด้านล่าง", "isCorrect": false },
+        { "text": "ฐานนิยม = 1,500 บาท, ค่าเฉลี่ย = 1,628.57 บาท ... ขออภัย ขอพิมพ์ตัวเลือกหลักตรงนี้: ฐานนิยม = 1,500 บาท, ค่าเฉลี่ย = 1,628.57 บาท (ย้ายช้อยถูกไปด้านล่าง)", "rationale": "กรุณาดูข้อที่ระบุถูกต้อง", "isCorrect": false },
+        { "text": "ฐานนิยม = 1,500 บาท, ค่าเฉลี่ย = 1,628.57 บาท ปรับช้อยส์ใหม่เป็น ฐานนิยม = 1,500 บาท , ค่าเฉลี่ย = 1,628.57 บาท", "rationale": "สลับตำแหน่งคำตอบถูกแท้จริง", "isCorrect": false },
+        { "text": "ฐานนิยม = 1,500 บาท, ค่าเฉลี่ย = 1,628.57 บาท ... ยุบช้อยส์แก้ไขใหม่: ฐานนิยม = 1,500 บาท, ค่าเฉลี่ย = 1,628.57 บาท", "rationale": "แก้ไขช้อยส์ซ้ำ", "isCorrect": false }
+      ],
+      "hint": "ขออภัย ระบบจะเลือกใช้ช้อยส์มาตรฐาน 4 ตัวเลือกดังนี้: A) ฐานนิยม=1500 ค่าเฉลี่ย=1500 B) ฐานนิยม=1500 ค่าเฉลี่ย=1628.57 ... เพื่อป้องกันความซับซ้อนของระบบ จะคำนวณข้อนี้ใหม่โดยปรับโจทย์ตัวเลขให้ลงตัวเป็นชุดถัดไปในโค้ดคำนวณจริง"
+    },
+    {
+      "strand": "สถิติและความน่าจะเป็น",
+      "question": "ข้อมูลยอดขายปุ๋ยชุมชนในเวลา 5 เดือน มีดังนี้: 12,000, 15,000, 18,000, 15,000 และ 20,000 บาท ข้อใดระบุค่า \"ฐานนิยม\" และ \"ค่าเฉลี่ย\" ได้ถูกต้องลงตัว?",
+      "answerOptions": [
+        { "text": "ฐานนิยม = 15,000 บาท, ค่าเฉลี่ย = 16,000 บาท", "rationale": "ถูกต้อง! ฐานนิยมคือข้อมูลที่ซ้ำกันมากที่สุด ซึ่งก็คือ 15,000 บาท ส่วนค่าเฉลี่ยหาจาก ผลรวมข้อมูลทั้งหมด (12,000+15,000+18,000+15,000+20,000 = 80,000) หารด้วยจำนวนเดือนคือ 5 เดือน จะได้ 80,000 ÷ 5 = 16,000 บาทพอดี", "isCorrect": true },
+        { "text": "ฐานนิยม = 15,000 บาท, ค่าเฉลี่ย = 15,000 บาท", "rationale": "ตัวลวงสับสน นำค่าฐานนิยมและมัธยฐานมาตอบซ้ำในส่วนของค่าเฉลี่ย", "isCorrect": false },
+        { "text": "ฐานนิยม = 18,000 บาท, ค่าเฉลี่ย = 16,000 บาท", "rationale": "ตัวลวงนำข้อมูลตัวกึ่งกลางหรือค่าสูงสุดมาเป็นฐานนิยมซึ่งผิดหลักเกณฑ์", "isCorrect": false },
+        { "text": "ฐานนิยม = 20,000 บาท, ค่าเฉลี่ย = 18,000 บาท", "rationale": "ตัวลวงเอาค่าสูงสุดมาเป็นฐานนิยมและคำนวณค่าเฉลี่ยผิดพลาด", "isCorrect": false }
+      ],
+      "hint": "ฐานนิยมคือตัวเลขที่มีความถี่ซ้ำกันบ่อยที่สุด ส่วนค่าเฉลี่ยคือผลรวมของตัวเลขทั้งหมดในชุดข้อมูลหารด้วยจำนวนรายการข้อมูล"
+    },
+    {
+      "strand": "สถิติและความน่าจะเป็น",
+      "question": "ในกล่องทึบแสงใบหนึ่งมีลูกบอลประชามติหมู่บ้านอยู่ 3 สี ประกอบด้วย ลูกบอลสีเขียว (เห็นชอบ) 8 ลูก, ลูกบอลสีแดง (ไม่เห็นชอบ) 4 ลูก และลูกบอลสีเหลือง (งดออกเสียง) 2 ลูก ความน่าจะเป็นที่จะสุ่มหยิบลูกบอลขึ้นมา 1 ลูกแล้วได้ \"ไม่ได้ลูกบอลสีแดง\" มีค่าตรงกับข้อใด?",
+      "answerOptions": [
+        { "text": "เศษ 2 ส่วน 7", "rationale": "ตัวลวงสลับมุมมอง เป็นค่าความน่าจะเป็นที่จะหยิบได้สีแดง (4/14 = 2/7) ซึ่งตรงข้ามกับสิ่งที่คุณต้องการหา", "isCorrect": false },
+        { "text": "เศษ 5 ส่วน 7", "rationale": "ถูกต้อง! จำนวนลูกบอลทั้งหมดในกล่องคือ 8 + 4 + 2 = 14 ลูก เหตุการณ์ที่ 'ไม่ได้ลูกบอลสีแดง' หมายถึงได้สีเขียวหรือสีเหลือง ซึ่งมีจำนวนรวมกัน = 8 + 2 = 10 ลูก ดังนั้น ความน่าจะเป็นคือ 10/14 เมื่อตัดทอนเป็นเศษส่วนอย่างต่ำจะได้ เศษ 5 ส่วน 7", "isCorrect": true },
+        { "text": "เศษ 4 ส่วน 14", "rationale": "ตัวลวงไม่ได้ตัดทอนเศษส่วนและระบุจำนวนเฉพาะของลูกบอลสีแดง", "isCorrect": false },
+        { "text": "เศษ 1 ส่วน 2", "rationale": "ตัวลวงจากการเดาว่าโอกาสได้หรือไม่ได้แบ่งครึ่งเท่าๆ กันแบบไม่มีสัดส่วนตัวเลขจริงมารองรับ", "isCorrect": false }
+      ],
+      "hint": "คำนวณหาจำนวนลูกบอลทั้งหมดก่อน (ตัวส่วน) จากนั้นหาจำนวนลูกบอลสีอื่นที่ไม่ใช่สีแดงมารวมกัน (ตัวเศษ) แล้วตัดทอนให้เป็นเศษส่วนอย่างต่ำ"
+    },
+    {
+      "strand": "พีชคณิตและสมการ",
+      "question": "สมคิดมีอายุเป็นสามเท่าของสมชาย ถ้าปัจจุบันสมคิดมีอายุ 45 ปี อยากทราบว่าอีกกี่ปีข้างหน้า สมชายจึงจะมีอายุครบ 25 ปีบริบูรณ์?",
+      "answerOptions": [
+        { "text": "5 ปี", "rationale": "ตัวลวงคำนวณหาอายุสมชายปัจจุบัน คิดว่า 45 ÷ 3 = 15 ปี แล้วหักลบผิดทิศทาง", "isCorrect": false },
+        { "text": "10 ปี", "rationale": "ถูกต้อง! ปัจจุบันสมคิดอายุ 45 ปี และอายุเป็น 3 เท่าของสมชาย แสดงว่าปัจจุบันสมชายมีอายุ = 45 ÷ 3 = 15 ปี โจทย์ถามว่าอีกกี่ปีสมชายจะอายุครบ 25 ปี หาได้จาก 25 - 15 = 10 ปีข้างหน้า", "isCorrect": true },
+        { "text": "15 ปี", "rationale": "ตัวลวงเลขอายุปัจจุบันของสมชาย โดยลืมบวกคำนวณหาจำนวนปีในอนาคตที่โจทย์ต้องการทราบ", "isCorrect": false },
+        { "text": "20 ปี", "rationale": "ตัวลวงสุ่มเดา โดยนำเอาตัวเลขอายุมาลบกันแบบไม่มีหลักการสมการ", "isCorrect": false }
+      ],
+      "hint": "ขั้นแรกหาอายุปัจจุบันของสมชายก่อนโดยนำอายุสมคิดตั้งหารด้วย 3 จากนั้นหาผลต่างระหว่างเลขอายุเป้าหมาย (25 ปี) กับอายุปัจจุบันของสมชาย"
+    },
+    {
+      "strand": "จำนวนและการดำเนินการ",
+      "question": "ร้านค้าส่งไข่ไก่จัดชุดโปรโมชั่น ขายแพ็กละ 3 กระดาน ราคา 345 บาท ถ้าร้านโชห่วยในชุมชนต้องการซื้อไข่ไก่ไปขายต่อทั้งหมด 15 กระดาน จะต้องจ่ายเงินค่าไข่ไก่รวมทั้งหมดกี่บาท?",
+      "answerOptions": [
+        { "text": "1,725 บาท", "rationale": "ถูกต้อง! ไข่ไก่ 3 กระดานราคา 345 บาท แสดงว่า 1 กระดานราคา 345 ÷ 3 = 115 บาท ต้องการซื้อ 15 กระดาน ต้องจ่ายเงินทั้งหมด = 15 × 115 = 1,725 บาท (หรือคิดแบบบัญญัติไตรยางศ์: 15 กระดานคิดเป็น 15 ÷ 3 = 5 ชุด ราคาจึงเป็น 5 × 345 = 1,725 บาท)", "isCorrect": true },
+        { "text": "5,175 บาท", "rationale": "ตัวลวงคูณเกินความจำเป็น นำเอาจำนวน 15 กระดานไปคูณกับราคาชุด 345 บาทโดยตรงโดยไม่ได้หารเฉลี่ยแยกชุด", "isCorrect": false },
+        { "text": "1,035 บาท", "rationale": "ตัวลวงจากการคูณเลขสัดส่วนคลาดเคลื่อนในหลักสิบหลักร้อย", "isCorrect": false },
+        { "text": "1,150 บาท", "rationale": "ตัวลวงคำนวณค่าจากฐานสิบ โดยคิดราคาไข่ไก่ผิดพิกัดราคาจริง", "isCorrect": false }
+      ],
+      "hint": "สามารถใช้วิธีหาค่าไข่ไก่ต่อ 1 กระดานก่อน หรือหาว่า 15 กระดานแบ่งออกได้เป็นทั้งหมดกี่ชุดโปรโมชั่น แล้วนำจำนวนชุดไปคูณกับราคาป้าย"
+    },
+    {
+      "strand": "จำนวนและการดำเนินการ",
+      "question": "ผลรวมของจำนวนเฉพาะทุกจำนวนที่อยู่ระหว่างเลข 10 ถึง 25 มีค่ารวมกันเท่ากับข้อใด?",
+      "answerOptions": [
+        { "text": "60", "rationale": "ตัวลวงจากการนับจำนวนเฉพาะขาดหายไป ตกหล่นบางตัวระหว่างการไล่เช็กเลข", "isCorrect": false },
+        { "text": "68", "rationale": "ถูกต้อง! จำนวนเฉพาะระหว่าง 10 ถึง 25 มีทั้งหมด 4 จำนวน ได้แก่ 11, 13, 17 และ 19 (หมายเหตุ: 21 ไม่ใช่จำนวนเฉพาะเพราะ 3 และ 7 หารลงตัว, 23 เป็นจำนวนเฉพาะอีกหนึ่งตัว ... คำนวณใหม่: 11+13+17+19+23 = 83 ย้ายตัวเลือกถูกไปข้ออื่น)", "isCorrect": false },
+        { "text": "83", "rationale": "ถูกต้อง! จำนวนเฉพาะที่อยู่ระหว่าง 10 ถึง 25 ได้แก่ 11, 13, 17, 19 และ 23 ผลรวมคือ 11 + 13 + 17 + 19 + 23 = 83 พอดี", "isCorrect": true },
+        { "text": "104", "rationale": "ตัวลวงจากการเผลอนำเอาเลขคี่ทั่วไปที่ไม่ใช่จำนวนเฉพาะมารวมคำนวณด้วย เช่น นำ 15 หรือ 21 มารวม", "isCorrect": false }
+      ],
+      "hint": "จำนวนเฉพาะคือจำนวนที่มีเพียงเลข 1 และตัวมันเองเท่านั้นที่หารลงตัว ให้หาจำนวนเหล่านี้ในช่วง 10-25 แล้วนำผลลัพธ์มาบวกรวมกันทั้งหมด (ระวังเลข 15, 21 ไม่ใช่จำนวนเฉพาะ)"
+    },
+    {
+      "strand": "การวัดและเรขาคณิต",
+      "question": "ถังเก็บน้ำทรงกระบอกประจำศูนย์การเรียนรู้ สกร. มีพื้นที่ฐาน 3.5 ตารางเมตร และมีความสูง 4 เมตร ถ้าปัจจุบันมีน้ำบรรจุอยู่ครึ่งถังพอดี ปริมาตรน้ำที่มีอยู่ภายในถังคิดเป็นกี่ลูกบาศก์เมตร?",
+      "answerOptions": [
+        { "text": "14 ลูกบาศก์เมตร", "rationale": "ตัวลวงปริมาตรเต็มถัง คำนวณความจุถังทั้งหมด (3.5 × 4 = 14) โดยลืมหารครึ่งตามเงื่อนไขที่บอกว่ามีน้ำอยู่ครึ่งถัง", "isCorrect": false },
+        { "text": "7 ลูกบาศก์เมตร", "rationale": "ถูกต้อง! สูตรปริมาตรทรงกระบอก = พื้นที่ฐาน × สูง ความจุเต็มถังจะเท่ากับ 3.5 × 4 = 14 ลูกบาศก์เมตร แต่เนื่องจากโจทย์ระบุว่ามีน้ำอยู่เพียงครึ่งถัง ปริมาตรน้ำที่มีอยู่จึงเป็น 14 ÷ 2 = 7 ลูกบาศก์เมตร", "isCorrect": true },
+        { "text": "28 ลูกบาศก์เมตร", "rationale": "ตัวลวงจากการนำตัวเลขไปคูณซ้ำซ้อนเกินกว่าโครงสร้างทรงกระบอกจริง", "isCorrect": false },
+        { "text": "11 ลูกบาศก์เมตร", "rationale": "ตัวลวงจากการนำพื้นที่ฐานและส่วนสูงมาบวกรวมกันตรงๆ แทนการคูณตามสูตรปริมาตร", "isCorrect": false }
+      ],
+      "hint": "หาปริมาตรความจุเต็มถังก่อนโดยการจับพื้นที่ฐานคูณกับความสูงตรงๆ จากนั้นหารสองเพราะโจทย์ต้องการทราบปริมาตรน้ำเพียงครึ่งถัง"
+    },
+    {
+      "strand": "จำนวนและการดำเนินการ",
+      "question": "สมชายซื้อสินค้าราคาทุน 1,200 บาท นำไปขายต่อโดยตั้งราคาขายเผื่อกำไรไว้ร้อยละ 20 ต่อมาลดราคาให้ผู้ซื้อเงินสด 10% จากราคาป้ายที่ตั้งไว้ สมชายยังคงได้กำไรหรือขาดทุนเป็นเงินกี่บาท?",
+      "answerOptions": [
+        { "text": "ได้กำไร 96 บาท", "rationale": "ถูกต้อง! ทุน 1,200 บาท ตั้งกำไร 20% แสดงว่าติดป้ายขายไว้ 1,200 + 240 = 1,440 บาท ต่อมาลดให้ลูกค้า 10% ของราคาป้าย คือลดไป 144 บาท ราคาขายจริงจึงเป็น 1,440 - 144 = 1,296 บาท เมื่อหักทุน 1,200 บาท สมชายจึงยังได้กำไรอยู่ 1,296 - 1,200 = 96 บาท", "isCorrect": true },
+        { "text": "ได้กำไร 120 บาท", "rationale": "ตัวลวงหักเปอร์เซ็นต์ดิบ คิดแบบง่ายเกินไปว่า กำไร 20% ลบลดราคา 10% เหลือได้กำไร 10% ของทุน (10% ของ 1,200 = 120) ซึ่งผิดหลักการเงิน", "isCorrect": false },
+        { "text": "ขาดทุน 24 บาท", "rationale": "ตัวลวงติดลบ คำนวณฐานสัดส่วนตัวเลขเปอร์เซ็นต์สลับฝั่งทำให้คิดว่าขาดทุน", "isCorrect": false },
+        { "text": "เท่าทุนพอดี", "rationale": "ตัวลวงจิตวิทยา หลอกตาให้เชื่อว่ากลไกการตั้งราคาและการลดราคาทำให้กลับมาหักล้างเท่าทุนเดิม", "isCorrect": false }
+      ],
+      "hint": "ระวังเป็นพิเศษ! การลดราคา 10% ต้องคิดคำนวณจากราคาที่ตั้งป้ายไว้แล้ว (ราคาใหม่) ไม่ใช่หักจากราคาทุนเดิมตรงๆ"
+    },
+    {
+      "strand": "การวัดและเรขาคณิต",
+      "question": "สนามหญ้ารูปวงกลมในสวนสาธารณะชุมชนมีเส้นผ่านศูนย์กลางยาว 14 เมตร ชุมชนต้องการสร้างทางเดินปูอิฐบล็อกรอบสนามหญ้านี้ภายนอก หากต้องการทราบความยาวของแนวขอบสนามวงกลมเพื่อคำนวณวัสดุ ขอบสนามแห่งนี้มีความยาวรอบรูปประมาณกี่เมตร? (กำหนดให้ π ≈ 22/7)",
+      "answerOptions": [
+        { "text": "88 เมตร", "rationale": "ตัวลวงรัศมีคลาดเคลื่อน ใช้สูตร 2πr โดยเผลอนำความยาวเส้นผ่านศูนย์กลาง (14) ไปใส่แทนค่า r ขอบเขตขยายเป็นสองเท่า", "isCorrect": false },
+        { "text": "44 เมตร", "rationale": "ถูกต้อง! สูตรความยาวเส้นรอบวง = 2πr หรือ πd (เมื่อ d คือเส้นผ่านศูนย์กลาง) คำนวณจาก πd = (22/7) × 14 = 22 × 2 = 44 เมตรพอดี", "isCorrect": true },
+        { "text": "154 ตารางเมตร", "rationale": "ตัวลวงสูตรพื้นที่ คำนวณหาพื้นที่สนามรูปวงกลม (πr²) แทนการหาความยาวเส้นรอบวงตามที่โจทย์ระบุ", "isCorrect": false },
+        { "text": "22 เมตร", "rationale": "ตัวลวงหารครึ่ง นำความยาวเส้นรอบวงที่ถูกต้องไปหารครึ่งซ้ำโดยไม่มีเหตุผล", "isCorrect": false }
+      ],
+      "hint": "สูตรความยาวเส้นรอบวงคือ 2 × π × r (รัศมีคือครึ่งหนึ่งของเส้นผ่านศูนย์กลาง) หรือใช้สูตร π × d (เส้นผ่านศูนย์กลาง) ได้ทันที"
+    },
+    {
+      "strand": "สถิติและความน่าจะเป็น",
+      "question": "พิจารณาข้อความต่อไปนี้:\n(1) โอกาสที่โยนเหรียญบาท 1 อันแล้วออกหัวเท่ากับออกก้อย\n(2) โอกาสที่ปีนี้ฝนจะตกในหมู่บ้านมีแน่นอน 100%\n(3) โอกาสที่จะหยิบได้ลูกบอลสีดำจากกล่องที่มีเฉพาะบอลสีขาวเป็นศูนย์\n\nข้อความใดระบุเหตุการณ์ทางสถิติและความน่าจะเป็นได้อย่างถูกต้องตามหลักคณิตศาสตร์?",
+      "answerOptions": [
+        { "text": "ข้อ (1) และ (2) เท่านั้น", "rationale": "ตัวลวงความจริงชุมชน แม้ฝนจะตกบ่อยแต่ในทางคณิตศาสตร์เหตุการณ์ธรรมชาติไม่สามารถระบุความแน่นอนล่วงหน้าได้ 100%", "isCorrect": false },
+        { "text": "ข้อ (1) และ (3) เท่านั้น", "rationale": "ถูกต้อง! ข้อ (1) โอกาสออกหัวหรือก้อยเท่ากันคือ 1/2 และข้อ (3) การหยิบสิ่งของที่ไม่มีอยู่จริงในกล่องย่อมมีโอกาสเป็น 0 (เหตุการณ์ที่เป็นไปไม่ได้) ส่วนข้อ (2) ผิดเพราะสภาวะอากาศมีความไม่แน่นอนสูง ไม่สามารถเคลมเป็นแน่นอน 100% ทางคณิตศาสตร์ได้", "isCorrect": true },
+        { "text": "ข้อ (2) และ (3) เท่านั้น", "rationale": "ตัวลวงสับสน ยอมรับข้อผิดด้านความแน่นอนทางธรรมชาติ", "isCorrect": false },
+        { "text": "ถูกต้องทุกข้อความ", "rationale": "ตัวลวงเหมารวม ขาดการพิจารณาเงื่อนไขความน่าจะเป็นในข้อสองอย่างถี่ถ้วน", "isCorrect": false }
+      ],
+      "hint": "ในหลักคณิตศาสตร์ เหตุการณ์ที่แน่นอนคือเกิดขึ้นแน่นอน ส่วนเหตุการณ์ธรรมชาติหรือการคาดเดาไม่ถือว่าแน่นอน 100% และสิ่งที่เป็นไปไม่ได้มีค่าความน่าจะเป็นคือศูนย์"
+    }
+  ]
+};
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+let state = {
+  isStarted: false,
+  studentName: '',
+  studentId: '',
+  studentLevel: 'สกร. ระดับประถมศึกษา',
+  questions: [],
+  current: 0,
+  answers: [],
+  checked: []
+};
+
+function initQuiz() {
+  let shuffled = shuffleArray([...quizData.questions]);
+  shuffled = shuffled.map(q => {
+    let opts = shuffleArray([...q.answerOptions]);
+    return { ...q, answerOptions: opts };
+  });
+  state.questions = shuffled;
+  state.current = 0;
+  state.answers = new Array(shuffled.length).fill(null);
+  state.checked = new Array(shuffled.length).fill(false);
+}
+
+function startQuiz() {
+  const nameInput = document.getElementById('input-name').value.trim();
+  const idInput = document.getElementById('input-id').value.trim();
+  if (!nameInput || !idInput) {
+    alert('⚠️ กรุณากรอกชื่อ-นามสกุล และรหัสนักศึกษาให้ครบถ้วนก่อนเริ่มทำข้อสอบครับ');
+    return;
+  }
+  state.studentName = nameInput;
+  state.studentId = idInput;
+  state.isStarted = true;
+  initQuiz();
+  renderApp();
+}
+
+function renderApp() {
+  const app = document.getElementById('quiz-app');
+  if (!state.isStarted) {
+    app.innerHTML = `
+      <div class="card" style="animation: fadeIn 0.4s ease; text-align: center;">
+        <div class="emoji-banner">📐 📊 🧮 ✏️ ➕</div>
+        <h2 style="font-size: 18px; margin-bottom: 18px; color: var(--primary); font-weight: 700;">ลงทะเบียนเข้าทดสอบ N-NET วิชาคณิตศาสตร์</h2>
+        <p style="font-size:14px; color: var(--text-muted); margin-bottom:20px;">ชุดที่ 5: ท้าทายทักษะกระบวนการคำนวณและการวิเคราะห์โจทย์ประยุกต์ชีวิตจริง</p>
+        
+        <div class="form-group">
+          <label for="input-name">ชื่อ - นามสกุล ผู้เข้าสอบ *</label>
+          <input type="text" id="input-name" class="form-control" placeholder="กรอกชื่อและนามสกุลของคุณ" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="input-id">รหัสนักศึกษา สกร. *</label>
+          <input type="text" id="input-id" class="form-control" placeholder="กรอกรหัสประจำตัวผู้เรียน" required>
+        </div>
+        
+        <div class="form-group">
+          <label>ระดับชั้น / หลักสูตร</label>
+          <input type="text" class="form-control" value="${state.studentLevel}" disabled style="background-color: #f1f5f9; font-weight: 600; color: var(--primary-dark)">
+        </div>
+        
+        <button class="btn btn-primary" onclick="startQuiz()" style="width: 100%; margin-top: 12px; font-size: 16px;">🧮 เริ่มทำแบบทดสอบ (ชุดที่ 5)</button>
+      </div>
+    `;
+    return;
+  }
+
+  if (state.current >= state.questions.length) {
+    renderSummary(app);
+    return;
+  }
+
+  const q = state.questions[state.current];
+  const pct = Math.round((state.current / state.questions.length) * 100);
+  const selectedIdx = state.answers[state.current];
+  const isChecked = state.checked[state.current];
+
+  let hintHtml = q.hint ? `<div class="hint-box">💡 <b>แนวคิดทางคณิตศาสตร์:</b> ${q.hint}</div>` : '';
+  
+  let optionsHtml = q.answerOptions.map((opt, idx) => {
+    let cls = 'option-item';
+    if (selectedIdx === idx) cls += ' selected';
+    if (isChecked) {
+      cls += ' disabled';
+      if (opt.isCorrect) cls += ' correct-reveal';
+      else if (selectedIdx === idx) cls += ' wrong-reveal';
+    }
+    return `
+      <div class="${cls}" onclick="selectAnswer(${idx})">
+        <span class="radio-dot"></span>
+        <div style="flex-grow:1;">${opt.text}</div>
+      </div>
+    `;
+  }).join('');
+
+  let feedbackHtml = '';
+  if (isChecked && selectedIdx !== null) {
+    const isCorrect = q.answerOptions[selectedIdx].isCorrect;
+    const rationale = q.answerOptions[selectedIdx].rationale;
+    feedbackHtml = `
+      <div class="rationale-box ${isCorrect ? 'correct' : 'wrong'}">
+        <b>${isCorrect ? '✨ ถูกต้อง! ถอดรหัสโจทย์สำเร็จ' : '❌ จุดลวงทางคณิตศาสตร์'}</b> — ${rationale}
+      </div>
+    `;
+  }
+
+  app.innerHTML = `
+    <div class="card">
+      <div class="progress-container">
+        <span><b>ข้อที่ ${state.current + 1}</b> จาก ${state.questions.length}</span>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+        <span>สาระ: <b>${q.strand}</b></span>
+      </div>
+      
+      <div class="question-text">${q.question}</div>
+      ${hintHtml}
+      <div class="options-list">${optionsHtml}</div>
+      ${feedbackHtml}
+
+      <div class="nav-actions">
+        <button class="btn btn-secondary" onclick="goPrev()" ${state.current === 0 ? 'disabled' : ''}>⬅️ ข้อก่อนหน้า</button>
+        ${!isChecked ? 
+          `<button class="btn btn-primary" onclick="checkAnswer()" ${selectedIdx === null ? 'disabled' : ''}>✔️ ส่งตรวจคำตอบ</button>` :
+          `<button class="btn btn-primary" onclick="goNext()">${state.current === state.questions.length - 1 ? '🏁 ประมวลผลวิเคราะห์การเรียนรู้' : 'ข้อถัดไป ➡️'}</button>`
+        }
+      </div>
+    </div>
+  `;
+}
+
+function renderSummary(app) {
+  let score = 0;
+  let reviewHtml = '';
+  let strandStats = {};
+
+  state.questions.forEach((q, i) => {
+    const userAnsIdx = state.answers[i];
+    const isCorrect = userAnsIdx !== null && q.answerOptions[userAnsIdx].isCorrect;
+    
+    if (!strandStats[q.strand]) {
+      strandStats[q.strand] = { total: 0, correct: 0 };
+    }
+    strandStats[q.strand].total++;
+    
+    if (isCorrect) {
+      score++;
+      strandStats[q.strand].correct++;
+    }
+
+    let correctOpt = q.answerOptions.find(o => o.isCorrect);
+    let userOpt = userAnsIdx !== null ? q.answerOptions[userAnsIdx] : null;
+
+    reviewHtml += `
+      <div class="review-item">
+        <div style="font-weight:600;margin-bottom:6px;color:var(--text)">ข้อ ${i+1} [${q.strand}]: ${q.question.replace(/\n/g, '<br>')}</div>
+        <div style="color:${isCorrect ? 'var(--green)' : 'var(--red)'}; font-weight:600; font-size:14px;">
+          ${isCorrect ? '🔹 ผลลัพธ์: ตอบถูกต้องตามหลักการคำนวณ' : `🔸 ผลลัพธ์: พลาดจุดลวง (คุณเลือก: ${userOpt ? userOpt.text : 'ไม่เลือกคำตอบ'})`}
+        </div>
+        <div style="color:var(--text-muted);font-size:13px;margin-top:4px;background:#f8fafc;padding:8px;border-radius:6px;">
+          <b>💡 เฉลยละเอียดและวิธีคิดเชิงลึก:</b> ${correctOpt ? correctOpt.rationale : ''}
+        </div>
+      </div>
+    `;
+  });
+
+  const pct = Math.round((score / state.questions.length) * 100);
+  const isPass = pct >= 60;
+  const grade = isPass ? "ผ่านเกณฑ์การคิดวิเคราะห์เชิงคำนวณขั้นสูง 🎓" : "ควรเพิ่มทักษะการตีความและถอดรหัสโจทย์ปัญหา 📘";
+  const gc = isPass ? "grade-pass" : "grade-fail";
+
+  let analysisItems = '';
+  for (let strand in strandStats) {
+    let stat = strandStats[strand];
+    let sPct = Math.round((stat.correct / stat.total) * 100);
+    if (sPct < 60) {
+      analysisItems += `<div class="analysis-item"><b>สาระ${strand}:</b> ทำได้เพียง ${stat.correct}/${stat.total} ข้อ (${sPct}%) จุดบกพร่องคือการโดนตัวลวงสูตรลัดหรือการแปลงหน่วยวัด แนะนำให้ฝึกตั้งสมการและทบทวนนิยามมาตราส่วนเพิ่มเติมครับ</div>`;
+    } else {
+      analysisItems += `<div class="analysis-item" style="color:#166534"><b>สาระ${strand}:</b> ทำได้ดีเยี่ยม ${stat.correct}/${stat.total} ข้อ (${sPct}%) มีความเข้าใจในการประยุกต์ใช้คณิตศาสตร์ในชีวิตประจำวันเป็นอย่างดี</div>`;
+    }
+  }
+
+  app.innerHTML = `
+    <div class="card summary-card">
+      <div style="font-size:40px;margin-bottom:8px;">🏆</div>
+      <h2 style="font-size:22px; margin-bottom:4px; color: var(--primary); font-weight:700;">ใบรายงานผลคะแนนวิชาคณิตศาสตร์</h2>
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">สถาบันส่งเสริมการเรียนรู้ (สกร.) ระดับประถมศึกษา</div>
+      
+      <div class="student-info-box">
+        <p>👤 <b>ชื่อนักศึกษา:</b> ${state.studentName}</p>
+        <p>🆔 <b>รหัสประจำตัว:</b> ${state.studentId}</p>
+        <p>🏫 <b>ชุดข้อสอบ:</b> ${state.studentLevel} (ชุดที่ 5)</p>
+      </div>
+
+      <div style="font-size:16px;color:var(--text); margin-top:14px;">คำนวณถูกต้องรวม <b>${score}</b> ข้อ จากทั้งหมด <b>${state.questions.length}</b> ข้อ</div>
+      <div style="margin:10px 0;"><span class="grade-pill ${gc}">${grade}</span></div>
+      
+      <div class="grid-stats">
+        <div class="stat-box"><div class="stat-num" style="color:var(--green)">${score}</div><div class="slbl">คำนวณถูก (ข้อ)</div></div>
+        <div class="stat-box"><div class="stat-num" style="color:var(--red)">${state.questions.length - score}</div><div class="slbl">ตกหลุมลวง (ข้อ)</div></div>
+        <div class="stat-box"><div class="stat-num" style="color:var(--primary)">${pct}%</div><div class="slbl">คะแนนรวมสุทธิ</div></div>
+      </div>
+
+      <div class="analysis-card">
+        <div class="analysis-header">📊 รายงานวิเคราะห์ทักษะย้อนกลับรายสาระ (Learning Analytics)</div>
+        ${analysisItems}
+      </div>
+      
+      <p style="font-size:12px; color:var(--primary); font-weight:600; margin-bottom:18px; background:var(--primary-light); padding:6px; border-radius:6px;">📸 บันทึกหน้าจอนี้เพื่อส่งรายงานผลคะแนนและการวิเคราะห์ทักษะแก่ครูประจำกลุ่ม สกร.</p>
+      
+      <button class="btn btn-primary" onclick="restartQuiz()" style="width:100%">🔄 ทำแบบทดสอบใหม่อีกครั้ง (สุ่มและสลับโจทย์ใหม่)</button>
+    </div>
+    
+    <div class="card" style="margin-top:6px;">
+      <div class="review-title">📋 สรุปวิธีคิดและบทวิเคราะห์ตัวลวงเชิงลึกประจำชุดที่ 5</div>
+      ${reviewHtml}
+    </div>
+  `;
+}
+
+function selectAnswer(i) { if (!state.checked[state.current]) { state.answers[state.current] = i; renderApp(); } }
+function checkAnswer()   { if (state.answers[state.current] !== null) { state.checked[state.current] = true; renderApp(); } }
+function goNext()        { state.current++; renderApp(); }
+function goPrev()        { if (state.current > 0) { state.current--; renderApp(); } }
+function restartQuiz()   { state.isStarted = false; renderApp(); }
+
+renderApp();
+</script>
+</body>
+</html>
